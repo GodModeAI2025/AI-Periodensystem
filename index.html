@@ -291,6 +291,28 @@
 
       return (
         <div style={{ minHeight: "100vh", padding: "24px 16px", maxWidth: 1400, margin: "0 auto" }}>
+            {/* Language Switch */}
+            <div style={{
+              position: "fixed", top: 12, right: 16, zIndex: 100,
+              display: "flex", gap: 2, background: "#fff",
+              borderRadius: 8, padding: 3, 
+              border: "1.5px solid #e0e0dc",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+              fontFamily: "'DM Sans', sans-serif",
+            }}>
+              <span style={{
+                padding: "4px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600,
+                background: "#111", color: "#fff", cursor: "default",
+              }}>DE</span>
+              <a href="index_en.html" style={{
+                padding: "4px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600,
+                color: "#999", textDecoration: "none", cursor: "pointer",
+                transition: "all 0.2s",
+              }}
+              onMouseEnter={e => { e.target.style.color = "#111"; e.target.style.background = "#f0f0ec"; }}
+              onMouseLeave={e => { e.target.style.color = "#999"; e.target.style.background = "transparent"; }}
+              >EN</a>
+            </div>
           {/* Header */}
           <header style={{
             textAlign: "center", marginBottom: 22,
@@ -469,7 +491,7 @@
             borderTop: "1px solid #f0f0ec", fontSize: 10, color: "#ccc",
             fontFamily: "'DM Mono', monospace",
           }}>
-            Periodensystem der Künstlichen Intelligenz · 2026 · Klicke auf ein Element für Details
+            Periodensystem der Künstlichen Intelligenz · 2026 · Klicke auf ein Element für Details{" · "}<a href="https://godmodeai2025.github.io/MarkZimmermann/" target="_blank" rel="noopener noreferrer" style={{ color: "#bbb", textDecoration: "none", borderBottom: "1px solid #ddd" }} onMouseEnter={e => e.target.style.color = "#666"} onMouseLeave={e => e.target.style.color = "#bbb"}>Impressum</a>
           </footer>
         </div>
       );
