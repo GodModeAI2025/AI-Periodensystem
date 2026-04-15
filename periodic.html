@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Periodensystem der KI — 128 Bausteine</title>
+  <meta name="description" content="Das Periodensystem der KI: 128 Elemente in 10 Kategorien." />
+  <meta property="og:title" content="Periodensystem der KI — 128 Bausteine" />
+  <meta property="og:locale" content="de_DE" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; }
+    body { background: #FAFAF8; font-family: 'DM Sans', 'Helvetica Neue', sans-serif; color: #1a1a1a; }
+    @keyframes slideUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  </style>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.2/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const { useState, useEffect, useRef, useMemo } = React;
+
+const CATEGORIES = {
+  FM: { name: "Foundation Models", color: "#C62828", light: "#FFEBEE", mid: "#EF9A9A" },
+  AR: { name: "Architekturen", color: "#E65100", light: "#FFF3E0", mid: "#FFCC80" },
+  LP: { name: "Lernparadigmen", color: "#9E7A15", light: "#FFF8E1", mid: "#FFE082" },
+  DA: { name: "Daten & Processing", color: "#00695C", light: "#E0F2F1", mid: "#80CBC4" },
+  TF: { name: "Tools & Frameworks", color: "#37474F", light: "#ECEFF1", mid: "#B0BEC5" },
+  AP: { name: "Anwendungen", color: "#6A1B9A", light: "#F3E5F5", mid: "#CE93D8" },
+  ES: { name: "Ethik & Safety", color: "#BF360C", light: "#FBE9E7", mid: "#FFAB91" },
+  IN: { name: "Infrastruktur", color: "#1565C0", light: "#E3F2FD", mid: "#90CAF9" },
+  AG: { name: "Agenten &Tic", color: "#00838F", light: "#E0F7FA", mid: "#80DEEA" },
+  NL: { name: "NLP & Sprache", color: "#283593", light: "#E8EAF6", mid: "#9FA8DA" },
+};
+
+const elements = [{ sym: "GPT", row: 0, col: 0, name: "GPT", cat: "FM", desc: "OpenAI's Sprachmodell-Familie und das kommerziell erfolgreichste LLM weltweit. Von GPT-3.5 über GPT-4 bis zu GPT-4o und den Reasoning-Modellen o1/o3 — jede Generation brachte Durchbrüche in Text, Code und multimodalem Verständnis. GPT-Modelle bilden das Rückgrat von ChatGPT, Microsoft Copilot und Tausenden von API-Integrationen. Die Architektur basiert auf Decoder-only Transformern mit autoregessiver Next-Token-Prediction." },
+  { sym: "Cld", row: 0, col: 1, name: "Claude", cat: "FM", desc: "Anthropic's KI-Assistent, gebaut mit dem Ziel maximaler Sicherheit und Nützlichkeit. Claude nutzt Constitutional AI (CAI) als Alignment-Methode, bei der das Modell anhand einer Verfassung ethischer Prinzipien trainiert wird. Mit über 200.000 Token Kontextfenster eignet sich Claude besonders für lange Dokumente, komplexe Analysen und Code. Claude Code ermöglicht agentic coding direkt im Terminal." },
+  { sym: "Gem", row: 0, col: 14, name: "Gemini", cat: "FM", desc: "Google DeepMind's multimodales Flaggschiff-Modell, das Text, Bild, Audio und Video nativ in einer Architektur verarbeitet. Gemini wurde von Grund auf multimodal konzipiert — nicht als Zusammenführung separater Modelle. Die Familie umfasst Ultra, Pro und Flash-Varianten für unterschiedliche Performance-Anforderungen. Gemini ist tief in Googles Produktökosystem integriert: Search, Workspace, Android und Cloud." },
+  { sym: "Lla", row: 0, col: 15, name: "LLaMA", cat: "FM", desc: "Meta's Open-Source LLM-Familie, die das Ökosystem offener Sprachmodelle maßgeblich geprägt hat. LLaMA-Modelle werden von der Community massiv weiterentwickelt — Alpaca, Vicuna und tausende Fine-Tuned Varianten basieren darauf. Die offene Lizenz ermöglicht kommerzielle Nutzung und hat den Wettbewerb zwischen Open- und Closed-Source Modellen befeuert. LLaMA 3 erreichte erstmals GPT-4-Niveau in vielen Benchmarks." },
+  { sym: "Mis", row: 0, col: 16, name: "Mistral", cat: "FM", desc: "Europäisches KI-Unternehmen aus Paris, das mit effizienten Open-Source-Modellen den Markt aufmischt. Mistral nutzt Mixture-of-Experts (MoE) Architektur, um bei weniger aktivem Compute hohe Qualität zu liefern. Die Modelle sind besonders schnell in der Inferenz und eignen sich ideal für latenz-sensitive Anwendungen. Als europäisches Unternehmen spielt Mistral eine wichtige Rolle in der Debatte um digitale Souveränität." },
+  { sym: "Grk", row: 0, col: 17, name: "Grok", cat: "FM", desc: "xAI's Sprachmodell, gegründet von Elon Musk als Alternative zu OpenAI. Grok hat exklusiven Echtzeit-Zugang zu X/Twitter-Daten, was es für aktuelle Ereignisse und Trending Topics besonders nützlich macht. Das Modell zeichnet sich durch einen direkten, humorvollen Kommunikationsstil aus. Grok wird als Open-Source-Modell angeboten und ist auf xAI's eigener Colossus-GPU-Infrastruktur trainiert." },
+  { sym: "SD", row: 9, col: 3, name: "Stable Diffusion", cat: "FM", desc: "Stable Diffusion ist das wichtigste Open-Source-Bildgenerierungsmodell und Basis eines riesigen Community-Ökosystems. Stability AI veröffentlichte es 2022 als Open Source, was eine Explosion von Fine-Tunes, ControlNet, LoRAs und Custom Workflows auslöste. SDXL und SD3 verbesserten Qualität und Textrendering erheblich. ComfyUI und Automatic1111 sind populäre Interfaces, die komplexe generative Pipelines ohne Code ermöglichen." },
+  { sym: "MdJ", row: 9, col: 4, name: "Midjourney", cat: "FM", desc: "Midjourney produziert die ästhetisch hochwertigsten KI-generierten Bilder und hat eine eigene künstlerische Identität entwickelt. Das Tool läuft über Discord-Bots und neuerdings über eine eigene Web-App. Midjourney's Stärke liegt in der künstlerischen Interpretation von Prompts — Ergebnisse wirken oft wie professionelle Illustrationen oder Konzeptkunst. Besonders populär bei Designern, Concept Artists und Kreativen." },
+  { sym: "DaE", row: 9, col: 5, name: "DALL·E", cat: "FM", desc: "DALL-E ist OpenAI's Bildgenerator, der als erstes System 2021 die Welt auf Text-to-Image-Generierung aufmerksam machte. DALL-E 3 ist tief in ChatGPT integriert und erzeugt direkt aus Konversation heraus Bilder mit bemerkenswerter Texttreue. Die Stärke liegt in der präzisen Umsetzung komplexer Prompts und der nahtlosen Integration in den OpenAI-Workflow. Inpainting und Outpainting ermöglichen gezielte Bearbeitung einzelner Bildbereiche." },
+  { sym: "Sor", row: 9, col: 6, name: "Sora", cat: "FM", desc: "Sora ist OpenAI's Videogenerierungsmodell, das 2024 mit beeindruckend physikalisch kohärenten Demo-Videos für Aufsehen sorgte. Es versteht 3D-Konsistenz, Objektpermanenz und physikalische Interaktionen auf einem bisher unerreichten Niveau. Sora nutzt eine Diffusion-Transformer-Architektur, die Videos als Sequenzen von Patches verarbeitet. Die Veröffentlichung markiert den Beginn einer neuen Ära für Content Creation, Film und Werbung." },
+  { sym: "Whi", row: 9, col: 7, name: "Whisper", cat: "FM", desc: "Whisper ist OpenAI's Open-Source-Spracherkennungsmodell, das über 100 Sprachen versteht und transkribiert. Trainiert auf 680.000 Stunden multilingualer Audio-Daten, erreicht Whisper bemerkenswerte Robustheit gegenüber Akzenten, Hintergrundgeräuschen und Fachsprache. Die Open-Source-Verfügbarkeit hat es zum Standard für Transkription, Untertitel und Voice-Interfaces gemacht." },
+  { sym: "AlF", row: 9, col: 8, name: "AlphaFold", cat: "FM", desc: "AlphaFold von DeepMind löste 2020 eines der größten offenen Probleme der Biologie: die Vorhersage der 3D-Struktur von Proteinen aus ihrer Aminosäuresequenz. AlphaFold2 erreichte experimentelle Genauigkeit und prognostizierte die Struktur von über 200 Millionen Proteinen. Demis Hassabis und John Jumper erhielten dafür 2024 den Nobelpreis für Chemie." },
+  { sym: "BRT", row: 9, col: 9, name: "BERT", cat: "FM", desc: "BERT (Bidirectional Encoder Representations from Transformers) war 2018 Google's Durchbruch für Natural Language Understanding. Im Gegensatz zu GPT lernt BERT bidirektional — es versteht Kontext von beiden Seiten eines Wortes gleichzeitig. BERT revolutionierte NLP-Benchmarks und ist noch heute Basis vieler produktiver Systeme für Klassifikation, NER und Suche." },
+  { sym: "CLp", row: 9, col: 10, name: "CLIP", cat: "FM", desc: "CLIP (Contrastive Language-Image Pre-training) von OpenAI verbindet Bild- und Textverständnis in einem gemeinsamen Embedding-Raum. Trainiert auf 400 Millionen Bild-Text-Paaren aus dem Internet, kann CLIP Bilder in beliebige Kategorien klassifizieren, ohne je dafür trainiert worden zu sein. CLIP ist ein Schlüsselbaustein für Diffusion-basierte Bildgenerierung und multimodale Suche." },
+  { sym: "DpS", row: 9, col: 11, name: "DeepSeek", cat: "FM", desc: "DeepSeek aus China hat 2024/2025 die KI-Welt überrascht: Trotz US-Chipsanktionen erreichen ihre Modelle westliches Spitzenniveau bei deutlich weniger Training-Compute. DeepSeek-V3 nutzt innovative Mixture-of-Experts-Architektur und wurde zu einem Bruchteil der Kosten vergleichbarer Modelle trainiert. Die Open-Source-Veröffentlichung löste eine Diskussion über die Effektivität von Exportkontrollen aus." },
+  { sym: "Phi", row: 9, col: 12, name: "Phi", cat: "FM", desc: "Phi ist Microsoft's Familie kleiner, aber überraschend leistungsstarker Sprachmodelle (Small Language Models). Phi-3 mit 3.8B Parametern erreicht Ergebnisse, die viel größere Modelle herausfordern — durch sorgfältige Datenselektion und synthetisches Training. Die Modelle sind optimiert für Edge Deployment: Smartphones, Laptops, IoT-Devices." },
+  { sym: "Flx", row: 9, col: 13, name: "Flux", cat: "FM", desc: "Flux von Black Forest Labs (gegründet von Ex-Stability-AI-Forschern) ist ein schneller, hochqualitativer Open-Source-Bildgenerator. Die Bildqualität konkurriert mit Midjourney und DALL-E 3, bei voller Open-Source-Verfügbarkeit. Flux hat sich als beliebte Alternative für lokale und API-basierte Bildgenerierung etabliert." },
+  { sym: "Qwn", row: 9, col: 14, name: "Qwen", cat: "FM", desc: "Qwen ist Alibaba Cloud's multimodale, multilinguale Open-Source LLM-Familie mit breiter Fähigkeitspalette. Qwen2.5 bietet Modelle von 0.5B bis 72B Parametern, plus spezialisierte Varianten für Code, Mathematik und Vision. Qwen demonstriert, dass das chinesische KI-Ökosystem vollwertige Alternativen zu westlichen Foundation Models hervorbringt." },
+
+  { sym: "Trf", row: 1, col: 0, name: "Transformer", cat: "AR", desc: "Die Architektur, die 2017 die KI-Revolution auslöste — vorgestellt im Paper 'Attention Is All You Need'. Transformer ersetzen rekurrente Netzwerke durch parallele Self-Attention-Mechanismen und ermöglichen dramatisch schnelleres Training. Praktisch jedes moderne Sprachmodell basiert auf dieser Architektur." },
+  { sym: "Att", row: 1, col: 1, name: "Self-Attention", cat: "AR", desc: "Der Kernmechanismus moderner Transformer-Architekturen. Self-Attention berechnet für jedes Token, wie stark es auf jedes andere Token achten soll. Die Rechenkosten skalieren quadratisch mit der Sequenzlänge, weshalb effizientere Varianten wie Flash Attention entwickelt wurden." },
+  { sym: "CNN", row: 1, col: 2, name: "Convolutional NN", cat: "AR", desc: "Convolutional Neural Networks revolutionierten ab 2012 die Bilderkennung. CNNs verwenden lernbare Filter, die hierarchisch Merkmale extrahieren — von Kanten über Texturen bis zu komplexen Objekten. Obwohl Vision Transformer CNNs in vielen Benchmarks überholt haben, bleiben CNNs für Edge-Devices wegen ihrer Effizienz relevant." },
+  { sym: "RNN", row: 1, col: 3, name: "Recurrent NN", cat: "AR", desc: "Rekurrente Neuronale Netze verarbeiten Sequenzen schrittweise und behalten Informationen in einem Hidden State. LSTMs und GRUs lösten das Vanishing-Gradient-Problem. Seit 2017 weitgehend durch Transformer ersetzt, aber in spezialisierten Anwendungen noch relevant." },
+  { sym: "GAN", row: 1, col: 4, name: "Gen. Adversarial Net", cat: "AR", desc: "Generative Adversarial Networks bestehen aus zwei Netzwerken im Wettstreit: Generator erzeugt Fake-Daten, Discriminator versucht Fakes zu erkennen. GANs waren bahnbrechend für Bildgenerierung, sind aber für Bilderzeugung weitgehend durch Diffusion Models abgelöst." },
+  { sym: "VAE", row: 1, col: 5, name: "Variational Autoencoder", cat: "AR", desc: "Variational Autoencoder lernen eine komprimierte, probabilistische Repräsentation von Daten in einem latenten Raum. Sie bilden einen Baustein von Latent Diffusion Models (z.B. Stable Diffusion), wo der VAE-Encoder Bilder in den latenten Raum komprimiert." },
+  { sym: "Dif", row: 1, col: 6, name: "Diffusion Models", cat: "AR", desc: "Diffusion Models lernen, schrittweise Rauschen zu einem klaren Bild zu entfernen. Die Technik liefert qualitativ hochwertigere Ergebnisse als GANs und ist die Architektur hinter DALL-E 3, Stable Diffusion und Midjourney. Der Nachteil ist die langsame Inferenz durch viele Denoising-Schritte." },
+  { sym: "MoE", row: 1, col: 7, name: "Mixture of Experts", cat: "AR", desc: "Mixture of Experts aktiviert pro Input nur einen kleinen Teil des Gesamtmodells über gelerntes Routing. Dies ermöglicht Modelle mit riesiger Kapazität bei moderatem Rechenaufwand. Mixtral und GPT-4 nutzen MoE-Architektur." },
+  { sym: "SSM", row: 1, col: 10, name: "State Space Model", cat: "AR", desc: "State Space Models wie Mamba bieten eine Alternative zu Transformern mit linearer statt quadratischer Komplexität. Besonders bei sehr langen Kontexten zeigen SSMs Vorteile. Hybrid-Architekturen, die SSM mit Attention kombinieren, gewinnen an Popularität." },
+  { sym: "GNN", row: 1, col: 11, name: "Graph Neural Net", cat: "AR", desc: "Graph Neural Networks lernen auf Graphstrukturen durch Message Passing zwischen Knoten. Eingesetzt für Moleküldesign, soziale Netzwerkanalyse, Empfehlungssysteme und Betrugserkennung." },
+  { sym: "MHd", row: 1, col: 12, name: "Multi-Head Attention", cat: "AR", desc: "Multi-Head Attention führt Self-Attention mehrfach parallel mit verschiedenen Projektionen durch. Jeder Head lernt unterschiedliche Beziehungsmuster — syntaktische Nähe, semantische Ähnlichkeit. GPT-4 verwendet über 100 Heads pro Layer." },
+  { sym: "KVc", row: 1, col: 13, name: "KV-Cache", cat: "AR", desc: "KV-Cache speichert berechnete Key- und Value-Vektoren während der autoregressiven Generierung. Ohne Cache müsste bei jedem neuen Token die gesamte Attention neu berechnet werden. Techniken wie PagedAttention verwalten den Cache-Speicher intelligent." },
+  { sym: "LoR", row: 1, col: 14, name: "LoRA", cat: "AR", desc: "Low-Rank Adaptation ermöglicht effizientes Fine-Tuning, indem nur kleine zusätzliche Matrizen trainiert werden. Dies reduziert den Speicherbedarf um 90%+ und ermöglicht Anpassung auf Consumer-GPUs. QLoRA macht Fine-Tuning von 70B-Modellen auf einer GPU möglich." },
+  { sym: "QAn", row: 1, col: 15, name: "Quantisierung", cat: "AR", desc: "Quantisierung komprimiert Modellgewichte auf 8-bit, 4-bit oder 2-bit. Ein 70B-Modell passt quantisiert auf eine Consumer-GPU. Methoden wie GPTQ, AWQ und GGUF erhalten die Qualität erstaunlich gut. Entscheidend für lokale LLM-Nutzung." },
+  { sym: "Emb", row: 1, col: 16, name: "Embeddings", cat: "AR", desc: "Embeddings übersetzen Konzepte in dichte Vektoren, in denen semantische Ähnlichkeit als geometrische Nähe abgebildet wird. Fundamental für RAG, Suchmaschinen und Empfehlungssysteme. OpenAI ada-002 und Sentence-BERT erzeugen hochqualitative Text-Embeddings." },
+  { sym: "Tok", row: 1, col: 17, name: "Tokenizer", cat: "AR", desc: "Tokenizer zerlegen Text in Sub-Word-Einheiten. BPE, SentencePiece und WordPiece sind gängige Verfahren. Die Wahl des Tokenizers beeinflusst Effizienz, Mehrsprachigkeit und Kontextfenster-Nutzung erheblich." },
+
+  { sym: "SuL", row: 2, col: 0, name: "Supervised Learning", cat: "LP", desc: "Supervised Learning ist die klassischste Form des ML: Das Modell lernt aus Input-Output-Paaren mit Labels. Basis für Klassifikation, Regression und auch Pre-Training von LLMs (Next-Token als Label)." },
+  { sym: "UsL", row: 2, col: 1, name: "Unsupervised Learning", cat: "LP", desc: "Unsupervised Learning entdeckt Strukturen in Daten ohne Labels. Clustering, Dimensionsreduktion und Anomalieerkennung. Oft als Vorstufe für Supervised Learning eingesetzt." },
+  { sym: "RfL", row: 2, col: 2, name: "Reinforcement Learning", cat: "LP", desc: "Reinforcement Learning trainiert einen Agenten durch Interaktion mit einer Umgebung. Entscheidend für AlphaGo, Robotik und RLHF — die Feinabstimmung von LLMs auf menschliche Präferenzen." },
+  { sym: "SSL", row: 2, col: 3, name: "Self-Supervised", cat: "LP", desc: "Self-Supervised Learning erzeugt Trainingssignale direkt aus den Daten. Masked Language Modeling (BERT) und Next-Token-Prediction (GPT) ermöglichen Training auf riesigen unlabeled Datensätzen — die Grundlage aller Foundation Models." },
+  { sym: "TrL", row: 2, col: 4, name: "Transfer Learning", cat: "LP", desc: "Transfer Learning überträgt Wissen von einer Aufgabe auf eine neue. Der Kern des Foundation-Model-Ansatzes: Einmal teuer pre-trainen, vielfach günstig spezialisieren. Hat die Schwelle für KI-Anwendungen massiv gesenkt." },
+  { sym: "FwL", row: 2, col: 5, name: "Few-Shot Learning", cat: "LP", desc: "Few-Shot Learning ermöglicht Modellen, aus wenigen Beispielen (1-10) zu lernen. Bei LLMs geschieht dies über In-Context Learning: Beispiele im Prompt, ohne Gewichtsänderung. GPT-3 demonstrierte 2020 erstmals beeindruckende Few-Shot-Fähigkeiten." },
+  { sym: "ZeS", row: 2, col: 6, name: "Zero-Shot", cat: "LP", desc: "Zero-Shot-Fähigkeit bedeutet, Aufgaben ohne explizite Beispiele zu lösen. Das Modell generalisiert allein über Sprachverständnis. CLIP demonstrierte Zero-Shot-Bilderkennung in beliebige Kategorien." },
+  { sym: "RHF", row: 2, col: 7, name: "RLHF", cat: "LP", desc: "Reinforcement Learning from Human Feedback machte ChatGPT möglich. Menschen bewerten Modellantworten, daraus wird ein Reward Model trainiert, das per RL das Sprachmodell optimiert. Entwickelt von OpenAI und Anthropic." },
+  { sym: "DPO", row: 2, col: 8, name: "Direct Preference Opt.", cat: "LP", desc: "DPO vereinfacht RLHF, indem es den Umweg über ein separates Reward Model eliminiert. Mathematisch äquivalent zu RLHF, aber einfacher und stabiler. Viele neuere Modelle nutzen DPO oder Varianten." },
+  { sym: "CoT", row: 2, col: 9, name: "Chain-of-Thought", cat: "LP", desc: "Chain-of-Thought bringt LLMs dazu, Schritt für Schritt zu denken. Die Accuracy bei Mathematik und Logik steigt dramatisch. OpenAI's o1 internalisiert CoT als verborgenen Reasoning-Prozess." },
+  { sym: "ICL", row: 2, col: 10, name: "In-Context Learning", cat: "LP", desc: "In-Context Learning ist die Fähigkeit großer LLMs, aus Beispielen im Prompt zu lernen — ohne Gewichtsänderung. Dieses emergente Verhalten tritt erst ab einer bestimmten Modellgröße auf und ist theoretisch noch nicht vollständig verstanden." },
+  { sym: "CuL", row: 2, col: 11, name: "Curriculum Learning", cat: "LP", desc: "Curriculum Learning organisiert Trainingsdaten von einfach zu schwer. Zeigt schnellere Konvergenz und bessere Generalisierung. In der LLM-Welt bei der Pre-Training-Daten-Mischung eingesetzt." },
+  { sym: "FdL", row: 2, col: 12, name: "Federated Learning", cat: "LP", desc: "Federated Learning trainiert Modelle dezentral auf verteilten Geräten. Rohdaten bleiben lokal, nur Gradienten werden geteilt. Apple nutzt es für Keyboard-Predictions, besonders relevant für Gesundheitsdaten." },
+  { sym: "MtL", row: 2, col: 13, name: "Meta-Learning", cat: "LP", desc: "Meta-Learning — 'Lernen zu lernen' — trainiert Modelle, die sich schnell an neue Aufgaben anpassen. MAML optimiert Initialisierungen, von denen wenige Updates für neue Aufgaben ausreichen." },
+  { sym: "CtL", row: 2, col: 14, name: "Contrastive Learning", cat: "LP", desc: "Contrastive Learning trainiert durch Vergleich ähnlicher und unähnlicher Datenpaare. CLIP nutzt es zwischen Bild-Text-Paaren, SimCLR zwischen augmentierten Bildern. Zentral für selbstüberwachtes Lernen." },
+  { sym: "DiT", row: 2, col: 15, name: "Distillation", cat: "LP", desc: "Knowledge Distillation überträgt Wissen von einem großen Teacher-Modell zu einem kleineren Student-Modell. DistilBERT erreicht 97% der BERT-Performance bei 60% der Größe. Entscheidend für Mobile und Edge." },
+  { sym: "FnT", row: 2, col: 16, name: "Fine-Tuning", cat: "LP", desc: "Fine-Tuning passt Foundation Models an spezifische Aufgaben an. Instruction Fine-Tuning brachte GPT-3 zu InstructGPT. Die Qualität der Fine-Tuning-Daten bestimmt maßgeblich die Modellqualität." },
+  { sym: "PrT", row: 2, col: 17, name: "Pre-Training", cat: "LP", desc: "Pre-Training ist die initiale Phase auf Billionen von Tokens. Kostet Millionen Dollar an GPU-Stunden. Die Qualität des Data Mix ist eines der am besten gehüteten Geheimnisse der KI-Labore." },
+
+  { sym: "RAG", row: 3, col: 0, name: "Retrieval-Augmented Gen.", cat: "DA", desc: "RAG kombiniert LLMs mit externer Wissenssuche. Reduziert Halluzinationen drastisch und ermöglicht Einbindung von Unternehmenswissen ohne Retraining. Der De-facto-Standard für Enterprise-KI." },
+  { sym: "VeD", row: 3, col: 1, name: "Vektordatenbank", cat: "DA", desc: "Vektordatenbanken speichern und durchsuchen Embedding-Vektoren mit Nearest-Neighbor-Algorithmen. Pinecone, Weaviate, Chroma, Qdrant. Rückgrat jedes RAG-Systems und jeder semantischen Suche." },
+  { sym: "FtE", row: 3, col: 2, name: "Feature Engineering", cat: "DA", desc: "Feature Engineering transformiert Rohdaten in informative Merkmale für ML-Modelle. Gutes Feature Engineering verbessert Performance stärker als ein Wechsel des Algorithmus. Für tabellarische Daten weiterhin entscheidend." },
+  { sym: "DAu", row: 3, col: 3, name: "Data Augmentation", cat: "DA", desc: "Data Augmentation erzeugt künstlich neue Trainingsdaten. Bilder: Rotation, Flip, Cutout. Text: Paraphrasierung, Back-Translation. Verhindert Overfitting, besonders bei kleinen Datensätzen." },
+  { sym: "ETL", row: 3, col: 4, name: "ETL Pipeline", cat: "DA", desc: "ETL-Pipelines automatisieren den Datenfluss von Rohquellen bis zum trainingsfertig aufbereiteten Datensatz. Apache Spark, dbt, Airflow und Dagster orchestrieren diese Pipelines." },
+  { sym: "LaD", row: 3, col: 5, name: "Labeling", cat: "DA", desc: "Labeling ist der oft unterschätzte Flaschenhals: Menschen annotieren Daten mit korrekten Kategorien. RLHF-Annotation erfordert subjektive Qualitätsranking. Scale AI und Labelbox haben die Industrie professionalisiert." },
+  { sym: "SyD", row: 3, col: 6, name: "Synthetische Daten", cat: "DA", desc: "Synthetische Daten werden von KI generiert, um Trainingsdaten zu ergänzen oder Datenschutzprobleme zu umgehen. Microsoft's Phi wurde teilweise auf GPT-4-generierten Daten trainiert — kontrovers, aber effektiv." },
+  { sym: "PrP", row: 3, col: 7, name: "Preprocessing", cat: "DA", desc: "Preprocessing umfasst Datenbereinigung vor dem Training: Deduplizierung, Qualitätsfilterung, Spracherkennung, Entfernung toxischer Inhalte. 'Garbage In, Garbage Out' gilt besonders für KI." },
+  { sym: "GrR", row: 3, col: 14, name: "GraphRAG", cat: "DA", desc: "GraphRAG erweitert RAG um Wissensgraphen, die Beziehungen zwischen Entitäten modellieren. Besonders für Multi-Hop-Fragen zeigt GraphRAG deutliche Vorteile gegenüber klassischem Chunk-basiertem RAG." },
+  { sym: "ChS", row: 3, col: 15, name: "Chunking", cat: "DA", desc: "Chunking-Strategien bestimmen, wie Dokumente für RAG zerteilt werden — eine kritische Designentscheidung. Fixed-Size, Semantic, Recursive und Agentic Chunking adressieren verschiedene Anforderungen." },
+  { sym: "OCR", row: 3, col: 16, name: "OCR", cat: "DA", desc: "Optical Character Recognition extrahiert Text aus Bildern und gescannten PDFs. Multimodale LLMs wie GPT-4V können OCR implizit durchführen und dabei Layout und Kontext verstehen." },
+  { sym: "WCr", row: 3, col: 17, name: "Web Crawling", cat: "DA", desc: "Web Crawling sammelt systematisch Daten aus dem Internet. Common Crawl stellt monatlich Petabytes frei — Basis fast aller LLM-Trainingskorpora. Firecrawl und Apify extrahieren strukturierte Daten für RAG." },
+
+  { sym: "PyT", row: 4, col: 0, name: "PyTorch", cat: "TF", desc: "Meta's Deep-Learning-Framework und unangefochtener Standard in der KI-Forschung. Dynamic Computation Graphs, über 80% aller ML-Paper nutzen PyTorch. torch.compile schließt Performance-Lücken bei Production Deployment." },
+  { sym: "TnF", row: 4, col: 1, name: "TensorFlow", cat: "TF", desc: "Google's ML-Framework mit Fokus auf Production. TFLite für Mobile, TF.js für Browser, TF Serving für skalierbare Inferenz. In vielen Produktionsumgebungen weiterhin die erste Wahl." },
+  { sym: "HgF", row: 4, col: 2, name: "Hugging Face", cat: "TF", desc: "Das GitHub der KI-Welt — über 500.000 Modelle. Transformers Library, Model Hub, Datasets, Spaces. Hugging Face demokratisiert ML-Zugang und ist oft der erste Anlaufpunkt für KI-Entwickler." },
+  { sym: "LCh", row: 4, col: 3, name: "LangChain", cat: "TF", desc: "Das populärste Framework für LLM-Anwendungen. Chains, Agents, Memory und RAG-Pipelines. Unterstützt alle großen LLM-Provider und hunderte Tools. Hat LLM-Application-Entwicklung massiv beschleunigt." },
+  { sym: "LId", row: 4, col: 4, name: "LlamaIndex", cat: "TF", desc: "Daten-Framework für LLM-Zugang zu externen Quellen. Spezialisiert auf Indexierung, Retrieval und Query-Verarbeitung über diverse Formate — PDFs, Datenbanken, APIs, Notion, Slack." },
+  { sym: "vLM", row: 4, col: 5, name: "vLLM", cat: "TF", desc: "Hochleistungs-Inference-Engine mit PagedAttention. 2-4x mehr gleichzeitige Requests als naive Implementierungen. Der De-facto-Standard für Self-Hosted LLM Serving." },
+  { sym: "Olm", row: 4, col: 6, name: "Ollama", cat: "TF", desc: "Macht lokale LLMs so einfach wie Docker: 'ollama run llama3' startet ein Modell in Sekunden. Verwaltet Downloads, Quantisierung und lokale API automatisch. OpenAI-kompatible API für nahtlose Integration." },
+  { sym: "MCP", row: 4, col: 7, name: "Model Context Protocol", cat: "TF", desc: "Anthropic's offener Standard für Tool-Integration in LLM-Systeme. Wie USB-C für Hardware: Eine Schnittstelle für alle Tools. Wird zum Industriestandard — Cursor, Replit und viele andere unterstützen MCP." },
+  { sym: "MLf", row: 4, col: 10, name: "MLflow", cat: "TF", desc: "Open-Source ML Lifecycle Management von Databricks. Experiment Tracking, Model Registry, Deployment. Standard-Tool in Enterprise-ML-Teams." },
+  { sym: "WnB", row: 4, col: 11, name: "Weights & Biases", cat: "TF", desc: "Erstklassiges Experiment Tracking mit interaktiven Dashboards. Hyperparameter-Sweeps, Artifacts. Standard-Tool für ML-Forschungsteams." },
+  { sym: "JAX", row: 4, col: 12, name: "JAX", cat: "TF", desc: "Google's NumPy + Autograd + XLA Compiler. DeepMind trainierte Gemini damit. Funktionale Programmierung ermöglicht einfache Parallelisierung über TPU-Pods." },
+  { sym: "CrA", row: 4, col: 13, name: "CrewAI", cat: "TF", desc: "Python-Framework für Multi-Agent-Systeme mit klaren Rollenverteilungen. Agenten mit definierten Rollen, Tools und Aufgaben arbeiten kollaborativ zusammen." },
+  { sym: "DSp", row: 4, col: 14, name: "DSPy", cat: "TF", desc: "Stanford's Framework für systematische Prompt-Optimierung. Statt manueller Prompts definiert man Signaturen und lässt den Optimizer die besten Prompts finden." },
+  { sym: "A2A", row: 4, col: 15, name: "A2A Protocol", cat: "TF", desc: "Google's offener Standard für Agent-zu-Agent-Kommunikation. Definiert Agent Cards, Task-Management und sichere Kommunikation. In Kombination mit MCP entsteht ein vollständiges Interoperabilitäts-Ökosystem." },
+  { sym: "SmK", row: 4, col: 16, name: "Semantic Kernel", cat: "TF", desc: "Microsoft's KI-Orchestrierung mit Plugins, Planner und Memory. Besonders stark im Microsoft-Ökosystem (Azure, Office 365, Dynamics). AI Orchestration Layer zwischen LLM und Business-Logik." },
+  { sym: "OAI", row: 4, col: 17, name: "OpenAI API", cat: "TF", desc: "Die meistgenutzte LLM-API weltweit. Chat Completions als De-facto-Standard — viele Provider bieten kompatible Endpoints. Assistants API für agentic Anwendungen mit Code Interpreter und Function Calling." },
+
+  { sym: "NLG", row: 5, col: 0, name: "Text Generation", cat: "AP", desc: "LLMs generieren Token für Token autoregressiv. Temperature, Top-p Sampling und Frequency Penalty steuern Kreativität und Kohärenz. In fast jeder Branche angekommen: Marketing, Journalismus, Kundenservice, Softwareentwicklung." },
+  { sym: "ImG", row: 5, col: 1, name: "Image Generation", cat: "AP", desc: "DALL-E 3, Midjourney, Stable Diffusion und Flux erzeugen fotorealistische Bilder aus Text. Eingesetzt für Werbung, Produktdesign, Concept Art. Ethische Debatten um Urheberrecht und Deepfakes begleiten die Revolution." },
+  { sym: "TTS", row: 5, col: 2, name: "Text-to-Speech", cat: "AP", desc: "TTS wandelt Text in natürlich klingende Sprache um. ElevenLabs ermöglicht Voice Cloning mit Sekunden an Audio. Eingesetzt für Hörbücher, Podcasts, Accessibility und Content-Lokalisierung." },
+  { sym: "STT", row: 5, col: 3, name: "Speech-to-Text", cat: "AP", desc: "Whisper setzte 2022 neue Maßstäbe: multilingual, robust, Open Source. Moderne ASR erreicht nahezu menschliche Genauigkeit. Anwendungen von Meeting-Transkription bis Voice-Interfaces." },
+  { sym: "CpV", row: 5, col: 4, name: "Computer Vision", cat: "AP", desc: "Bilderkennung, Objektdetektion, Segmentierung, Pose Estimation. Multimodale LLMs haben die Grenzen zwischen CV und NLP aufgelöst. Einsatz: Qualitätskontrolle, Medizin, Autonomes Fahren, AR." },
+  { sym: "VdG", row: 5, col: 5, name: "Video Generation", cat: "AP", desc: "Sora, Runway, Kling und Pika erzeugen Videos aus Text. Kämpft noch mit physikalischer Konsistenz. Einsatzgebiete: Werbung, Film-Previsualisierung, Social Media Content." },
+  { sym: "CdG", row: 5, col: 6, name: "Code Generation", cat: "AP", desc: "GitHub Copilot, Cursor, Claude Code erzeugen Code aus natürlicher Sprache. 30-55% Produktivitätssteigerung. Jeder Entwickler wird zukünftig mit KI-Tools arbeiten." },
+  { sym: "RoB", row: 5, col: 7, name: "Robotik", cat: "AP", desc: "Embodied AI verbindet Foundation Models mit physischer Interaktion. Google's RT-2 und Figure 01 nutzen Vision-Language-Models für Robotersteuerung. Tesla Optimus und Figure definieren humanoide Roboter neu." },
+  { sym: "ViC", row: 5, col: 10, name: "Vibe Coding", cat: "AP", desc: "Softwareentwicklung durch natürlichsprachliche Beschreibung statt Programmieren. Cursor, Replit Agent, Claude Code, v0. Demokratisiert Softwareentwicklung für Nicht-Programmierer." },
+  { sym: "DrA", row: 5, col: 11, name: "Drug Discovery", cat: "AP", desc: "AlphaFold löste das Protein-Faltungsproblem (Nobelpreis 2024). Generative Modelle designen neue Moleküle. KI könnte den 10-15-Jahres-Zyklus der Medikamentenentwicklung auf 2-3 Jahre verkürzen." },
+  { sym: "AvD", row: 5, col: 12, name: "Autonomous Driving", cat: "AP", desc: "Tesla setzt auf kamerabasierten End-to-End-Ansatz, Waymo auf Lidar-basierte Systeme. Level 4 ist in begrenzten Gebieten Realität. Level 5 bleibt eine der größten offenen KI-Herausforderungen." },
+  { sym: "ReS", row: 5, col: 13, name: "Recommender Systems", cat: "AP", desc: "Netflix, Spotify, Amazon und TikTok generieren Milliardenumsätze durch personalisierte Empfehlungen. Collaborative Filtering, Content-based, Hybrid. Zunehmend LLM-basierte konversationale Empfehlungen." },
+  { sym: "SeA", row: 5, col: 14, name: "Sentiment Analysis", cat: "AP", desc: "Automatische Stimmungserkennung in Texten. Brand Monitoring, Finanzanalyse, Kundenservice-Triage. >90% Accuracy, Herausforderung bei Sarkasmus und kulturellem Kontext." },
+  { sym: "3DG", row: 5, col: 15, name: "3D Generation", cat: "AP", desc: "NeRF und Gaussian Splatting erzeugen 3D-Assets aus Text oder Bildern. Meshy, Tripo und Luma für Games, AR/VR. Qualität nähert sich produktionstauglichem Niveau." },
+  { sym: "MuG", row: 5, col: 16, name: "Music Generation", cat: "AP", desc: "Suno und Udio erzeugen vollständige Songs inklusive Gesang aus Text. Transformer und Diffusion Models, trainiert auf Millionen Songs. Intensive Urheberrechtsdebatte." },
+  { sym: "SrC", row: 5, col: 17, name: "AI Search", cat: "AP", desc: "Perplexity liefert Antworten statt Links, Google AI Overview fasst Ergebnisse zusammen. Bedroht das klassische Suchmaschinen-Modell. Für Nutzer: schnellere Antworten, für Content-Creator: weniger Traffic." },
+
+  { sym: "AgW", row: 6, col: 10, name: "Agentic Workflows", cat: "AG", desc: "Autonome KI-Agenten die planen, handeln, beobachten und nachbessern. Statt einmaliger Prompt→Antwort durchlaufen Agenten iterative Loops. 2024/2025 markiert den Übergang von Chatbots zu echten KI-Agenten." },
+  { sym: "ToU", row: 6, col: 11, name: "Tool Use", cat: "AG", desc: "LLMs rufen APIs auf, führen Code aus, fragen Datenbanken ab. Function Calling, Tool Use und MCP standardisieren die Integration. Ohne Tools bleibt ein LLM auf sein Trainingswissen beschränkt." },
+  { sym: "MAS", row: 6, col: 12, name: "Multi-Agent Systems", cat: "AG", desc: "Mehrere spezialisierte Agenten kooperieren: Researcher sammelt, Writer formuliert, Critic prüft. Skaliert besser als monolithische Agenten für komplexe, mehrstufige Aufgaben." },
+  { sym: "PrE", row: 6, col: 13, name: "Prompt Engineering", cat: "AG", desc: "System Prompts, Few-Shot-Beispiele, Chain-of-Thought, Role Prompting. Wird zunehmend durch automatisierte Methoden (DSPy) ergänzt, bleibt aber als menschliche Fähigkeit wertvoll." },
+  { sym: "MeM", row: 6, col: 14, name: "Memory Systems", cat: "AG", desc: "Short-Term Memory im Kontextfenster, Long-Term in Vektordatenbanken. MemGPT verwaltet Memory hierarchisch wie ein OS. Entscheidend für personalisierte Assistenten und langfristige Projekte." },
+  { sym: "PlN", row: 6, col: 15, name: "Planning & Reasoning", cat: "AG", desc: "ReAct alterniert zwischen Denken und Handeln, Tree-of-Thought exploriert Lösungspfade parallel. Reasoning-Fähigkeiten (o1/o3, Claude) haben sich 2024/2025 dramatisch verbessert." },
+  { sym: "CdI", row: 6, col: 16, name: "Code Interpreter", cat: "AG", desc: "LLMs führen Python in Sandbox aus. Datenanalyse, Berechnungen, Diagramme werden präzise statt approximativ. OpenAI, Claude und Google bieten diese Fähigkeit." },
+  { sym: "OcH", row: 6, col: 17, name: "Orchestrierung", cat: "AG", desc: "Koordination von LLMs, Tools und Agenten in Workflows. DAGs definieren Abhängigkeiten und Parallelisierung. LangGraph, Prefect, Temporal verbinden Microservices zu End-to-End-Pipelines." },
+
+  { sym: "AlI", row: 6, col: 0, name: "Alignment", cat: "ES", desc: "KI-Ziele mit menschlichen Werten synchronisieren. Constitutional AI, RLHF, DPO. Wird existenzieller je mächtiger Modelle werden. Forschung zu Reward Hacking und Scalable Oversight." },
+  { sym: "XAI", row: 6, col: 1, name: "Explainability", cat: "ES", desc: "SHAP, LIME, Attention Maps machen KI-Entscheidungen nachvollziehbar. Regulatorisch zunehmend gefordert (EU AI Act). Deep Learning Modelle sind inherent schwer zu erklären." },
+  { sym: "BiF", row: 6, col: 2, name: "Bias & Fairness", cat: "ES", desc: "KI reproduziert Vorurteile aus Trainingsdaten. Fairness-Metriken und Audit-Frameworks helfen. Völlige Bias-Freiheit ist unmöglich — die Frage ist, welche Tradeoffs akzeptabel sind." },
+  { sym: "PrI", row: 6, col: 3, name: "Privacy", cat: "ES", desc: "Differential Privacy, Membership Inference Attacks, DSGVO und EU AI Act. Datenschutz in Training, Inferenz und Deployment von KI-Systemen." },
+  { sym: "RdT", row: 6, col: 4, name: "Red Teaming", cat: "ES", desc: "Systematisches adversariales Testen auf Jailbreaks, Prompt Injection und toxische Outputs. Anthropic, OpenAI und Google führen vor jedem Release umfangreiche Red-Teaming-Kampagnen durch." },
+  { sym: "GuR", row: 6, col: 5, name: "Guardrails", cat: "ES", desc: "Sicherheitsschichten zwischen Input und Output. NeMo Guardrails, Guardrails AI, LlamaGuard. Essenziell für Enterprise-Deployment, wo unkontrollierte Outputs Haftungsrisiken bergen." },
+  { sym: "HaL", row: 6, col: 6, name: "Halluzinationen", cat: "ES", desc: "LLMs generieren plausibel klingende, aber falsche Informationen. Gegenmaßnahmen: RAG, Chain-of-Verification, Grounding. Vollständige Eliminierung bleibt eine offene Herausforderung." },
+  { sym: "EuA", row: 6, col: 7, name: "EU AI Act", cat: "ES", desc: "Weltweit erstes umfassendes KI-Gesetz. Risikoklassen von Minimal bis Unakzeptabel. Beeinflusst KI-Entwicklung global — wie die DSGVO zum Datenschutz-Standard wurde." },
+
+  { sym: "GPU", row: 7, col: 0, name: "GPU Computing", cat: "IN", desc: "NVIDIA H100, B200 dominieren mit 80-90% Marktanteil. GPT-4-Training: 25.000+ GPUs über Monate, dreistellige Millionenkosten. GPU-Knappheit und Energieverbrauch sind zentrale Engpässe." },
+  { sym: "TPU", row: 7, col: 1, name: "TPU", cat: "IN", desc: "Google's maßgeschneiderte KI-Chips. TPU-Pods verbinden Tausende Chips für verteiltes Training. Gemini wurde auf TPUs trainiert. Nur über Google Cloud verfügbar." },
+  { sym: "ClC", row: 7, col: 2, name: "Cloud ML", cat: "IN", desc: "AWS SageMaker, Azure ML, GCP Vertex AI. ML-Lifecycle als Managed Service. API-Zugang zu Foundation Models über Bedrock, Azure OpenAI, Model Garden." },
+  { sym: "EdG", row: 7, col: 3, name: "Edge AI", cat: "IN", desc: "KI direkt auf Endgeräten — Smartphones, IoT, Kameras. TFLite, ONNX, Core ML. Apple Neural Engine, Google Edge TPU. Niedrige Latenz, Datenschutz, Offline-Fähigkeit." },
+  { sym: "CoN", row: 7, col: 4, name: "Containerisierung", cat: "IN", desc: "Docker und Kubernetes für reproduzierbare, skalierbare ML-Workflows. NVIDIA Container Toolkit für GPU-Zugriff. In Produktion der Standard für zuverlässiges Deployment." },
+  { sym: "ScL", row: 7, col: 5, name: "Scaling Laws", cat: "IN", desc: "Kaplan (2020) und Chinchilla (2022): Power-Law-Zusammenhänge zwischen Modellgröße, Daten und Compute. Theoretische Grundlage für die Investitionsentscheidungen der KI-Labore." },
+  { sym: "MoS", row: 7, col: 6, name: "Model Serving", cat: "IN", desc: "Triton, TGI, vLLM für Production Inference. Continuous Batching, Speculative Decoding, Tensor Parallelism. Autoscaling und A/B-Testing für zuverlässiges Serving." },
+  { sym: "CUd", row: 7, col: 7, name: "CUDA", cat: "IN", desc: "NVIDIA's GPU-Programmiermodell — Basis allen modernen MLs. Der tiefste Moat im KI-Hardware-Markt. ROCm (AMD) und oneAPI (Intel) versuchen als Alternativen Fuß zu fassen." },
+
+  { sym: "NER", row: 7, col: 10, name: "Named Entity Rec.", cat: "NL", desc: "Erkennung benannter Entitäten: Personen, Orte, Organisationen. Transformer-basiert, F1 >90%. Baustein für Information Extraction und Wissensgraph-Aufbau." },
+  { sym: "SuM", row: 7, col: 11, name: "Summarization", cat: "NL", desc: "Extractive wählt wichtige Sätze, Abstractive formuliert neu. LLMs haben die Qualität revolutioniert. Anwendungen: News, Meeting Minutes, Paper-Abstracts." },
+  { sym: "TrN", row: 7, col: 12, name: "Translation", cat: "NL", desc: "Neural MT hat professionelle Qualität erreicht. LLMs ermöglichen Zero-Shot-Übersetzung in seltene Sprachen. Google Translate, DeepL und Meta NLLB übersetzen zwischen hunderten Sprachpaaren." },
+  { sym: "QnA", row: 7, col: 13, name: "Question Answering", cat: "NL", desc: "Open-Domain, Closed-Book und Open-Book QA. Extractive markiert Antworten im Text, Generative formuliert frei. Jeder Chatbot ist im Kern ein QA-System." },
+  { sym: "ClS", row: 7, col: 14, name: "Classification", cat: "NL", desc: "Spam, Themen, Intent, Toxizität. BERT-basiert >95% Accuracy. Zero-Shot mit LLMs ermöglicht Kategorisierung ohne jedes Trainingsbeispiel." },
+  { sym: "ToM", row: 7, col: 15, name: "Topic Modeling", cat: "NL", desc: "BERTopic kombiniert Sentence Embeddings mit Clustering. Zeigt Themen in Korpora, ihre Veränderung über Zeit. Anwendungen: Marktforschung, Social Media Monitoring." },
+  { sym: "InE", row: 7, col: 16, name: "Info Extraction", cat: "NL", desc: "Strukturierte Daten aus Fließtext: Relationen, Events, Attribute. LLMs als universelle Extraktoren. Fundamental für Wissensgraph-Aufbau und Business Intelligence." },
+  { sym: "DlG", row: 7, col: 17, name: "Dialogue Systems", cat: "NL", desc: "Task-Oriented (Hotel buchen) und Open-Domain (freies Gespräch). LLMs haben beide vereinheitlicht. Herausforderungen: Kohärenz, Personalisierung, emotionale Intelligenz." },];
+
+const TOTAL_COLS = 18;
+const catEntries = Object.entries(CATEGORIES);
+
+function Cell({ el, selected, setSelected, hoveredCat }) {
+  const cat = CATEGORIES[el.cat];
+  const isSelected = selected?.sym === el.sym;
+  const dimmed = hoveredCat && hoveredCat !== el.cat;
+  const [hovered, setHovered] = useState(false);
+  const active = isSelected || (hovered && !dimmed);
+  return (
+    <div onClick={() => setSelected(isSelected ? null : el)}
+      onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
+      role="button" tabIndex={0}
+      onKeyDown={e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); setSelected(isSelected?null:el); } }}
+      style={{
+        aspectRatio: "1", background: active ? cat.light : "#fff",
+        border: `1.5px solid ${active ? cat.color : "#e8e8e3"}`,
+        borderLeft: `3px solid ${active ? cat.color : dimmed ? "#e8e8e3" : cat.color+"50"}`,
+        borderRadius: 4, display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center", cursor: "pointer",
+        transition: "all 0.2s", opacity: dimmed ? 0.1 : 1, position: "relative",
+        padding: 2, transform: active ? "scale(1.1)" : "scale(1)",
+        zIndex: active ? 10 : 1, outline: "none",
+        boxShadow: active ? `0 3px 16px ${cat.color}20` : "0 1px 2px rgba(0,0,0,0.03)",
+      }}>
+      <span style={{ fontSize: "clamp(10px,1.5vw,17px)", fontWeight: 700, color: cat.color, lineHeight: 1 }}>{el.sym}</span>
+      <span style={{ fontSize: "clamp(3px,0.48vw,5.5px)", color: "#999", textAlign: "center", lineHeight: 1.15, maxWidth: "96%", overflow: "hidden", whiteSpace: "normal", wordBreak: "break-word", marginTop: 1, fontWeight: 500, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{el.name}</span>
+    </div>
+  );
+}
+
+function App() {
+  const [selected, setSelected] = useState(null);
+  const [hoveredCat, setHoveredCat] = useState(null);
+  const [mounted, setMounted] = useState(false);
+  const detailRef = useRef(null);
+
+  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => { if (selected && detailRef.current) detailRef.current.scrollIntoView({ behavior:"smooth", block:"nearest" }); }, [selected]);
+  useEffect(() => { const h=e=>{ if(e.key==="Escape"){ setSelected(null); setHoveredCat(null); } }; window.addEventListener("keydown",h); return ()=>window.removeEventListener("keydown",h); }, []);
+
+  const grid = useMemo(() => { const g={}; elements.forEach(el=>{ g[`${el.row}-${el.col}`]=el; }); return g; }, []);
+
+  return (
+    <div style={{ minHeight: "100vh", padding: "20px 12px", maxWidth: 1400, margin: "0 auto" }}>
+
+      <div style={{ position: "fixed", top: 12, right: 16, zIndex: 100, display: "flex", alignItems: "center", gap: 3, background: "#fff", borderRadius: 8, padding: 3, border: "1.5px solid #e0e0dc", boxShadow: "0 2px 10px rgba(0,0,0,0.07)", fontFamily: "'DM Sans', sans-serif" }}>
+        <a href="index.html" style={{ padding: "4px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600, color: "#999", textDecoration: "none", transition: "all 0.15s" }} onMouseEnter={e=>{ e.target.style.color="#111"; e.target.style.background="#f0f0ec"; }} onMouseLeave={e=>{ e.target.style.color="#999"; e.target.style.background="transparent"; }}>🗺 Map</a>
+        <span style={{ padding: "4px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600, background: "#111", color: "#fff", cursor: "default" }}>⊞ Tabelle</span>
+        <span style={{ width: 1, height: 16, background: "#e0e0dc", margin: "0 2px" }} />
+        <span style={{ padding: "4px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600, background: "#111", color: "#fff", cursor: "default" }}>DE</span>
+        <a href="periodic_en.html" style={{ padding: "4px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600, color: "#999", textDecoration: "none", transition: "all 0.15s" }} onMouseEnter={e=>{ e.target.style.color="#111"; e.target.style.background="#f0f0ec"; }} onMouseLeave={e=>{ e.target.style.color="#999"; e.target.style.background="transparent"; }}>EN</a>
+      </div>
+
+      <header style={{ textAlign:"center", marginBottom:20, opacity:mounted?1:0, transition:"opacity 0.8s" }}>
+        <div style={{ display:"inline-block", padding:"3px 14px", borderRadius:100, background:"#f0f0ec", fontSize:10, fontWeight:500, color:"#999", letterSpacing:"0.12em", textTransform:"uppercase", fontFamily:"'DM Mono',monospace", marginBottom:6 }}>128 Bausteine · 10 Kategorien</div>
+        <h1 style={{ fontSize:"clamp(20px,3.5vw,38px)", fontWeight:700, letterSpacing:"-0.03em", color:"#111", lineHeight:1.15 }}>
+          Periodensystem der{" "}<span style={{ background:"linear-gradient(135deg,#C62828,#E65100,#00695C,#6A1B9A,#1565C0)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>Künstlichen Intelligenz</span>
+        </h1>
+        <p style={{ fontSize:12, color:"#aaa", marginTop:4 }}>Alle KI-Bausteine im klassischen Tabellen-Layout.</p>
+      </header>
+
+      <nav style={{ display:"flex", flexWrap:"wrap", justifyContent:"center", gap:4, marginBottom:18 }}>
+        {catEntries.map(([key,cat])=>{
+          const active=hoveredCat===key;
+          return <button key={key} onClick={()=>setHoveredCat(active?null:key)} style={{ display:"flex", alignItems:"center", gap:4, padding:"3px 9px", borderRadius:5, cursor:"pointer", background:active?cat.light:"#fff", border:`1.5px solid ${active?cat.color:"#e0e0dc"}`, fontSize:9, fontWeight:600, color:active?cat.color:"#888", fontFamily:"'DM Sans',sans-serif", transition:"all 0.2s" }}><span style={{ width:7, height:7, borderRadius:2, background:cat.color, opacity:active?1:0.5 }} />{cat.name}</button>;
+        })}
+      </nav>
+
+      <div style={{ display:"grid", gridTemplateColumns:`repeat(${TOTAL_COLS},minmax(0,1fr))`, gap:2.5 }}>
+        {[0,1,2,3,4,5,6,7].flatMap(row=>Array.from({length:TOTAL_COLS},(_, col)=>{ const el=grid[`${row}-${col}`]; if(!el) return <div key={`${row}-${col}`} />; return <Cell key={el.sym} el={el} selected={selected} setSelected={setSelected} hoveredCat={hoveredCat} />; }))}
+      </div>
+
+      <div style={{ display:"flex", alignItems:"center", gap:8, margin:"10px 0 4px", paddingLeft:2 }}>
+        <span style={{ fontSize:8, color:"#bbb", letterSpacing:"0.08em", textTransform:"uppercase", fontWeight:500, whiteSpace:"nowrap", fontFamily:"'DM Mono',monospace" }}>★ Extended Foundation Models</span>
+        <div style={{ flex:1, height:1, background:"#e8e8e4" }} />
+      </div>
+      <div style={{ display:"grid", gridTemplateColumns:`repeat(${TOTAL_COLS},minmax(0,1fr))`, gap:2.5 }}>
+        {Array.from({length:TOTAL_COLS},(_, col)=>{ const el=grid[`9-${col}`]; if(!el) return <div key={`ext-${col}`} />; return <Cell key={el.sym} el={el} selected={selected} setSelected={setSelected} hoveredCat={hoveredCat} />; })}
+      </div>
+
+      {selected && (
+        <div ref={detailRef} style={{ background:"#fff", border:`2px solid ${CATEGORIES[selected.cat].color}`, borderRadius:12, padding:18, marginTop:16, animation:"slideUp 0.25s ease", boxShadow:`0 4px 30px ${CATEGORIES[selected.cat].color}12` }}>
+          <div style={{ display:"flex", gap:14, alignItems:"flex-start", flexWrap:"wrap" }}>
+            <div style={{ width:66, height:66, borderRadius:10, flexShrink:0, background:CATEGORIES[selected.cat].light, border:`2px solid ${CATEGORIES[selected.cat].color}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+              <span style={{ fontSize:24, fontWeight:700, color:CATEGORIES[selected.cat].color }}>{selected.sym}</span>
+            </div>
+            <div style={{ flex:1, minWidth:180 }}>
+              <h3 style={{ fontSize:17, fontWeight:700, color:"#111", margin:0 }}>{selected.name}</h3>
+              <span style={{ display:"inline-block", padding:"2px 10px", borderRadius:100, background:CATEGORIES[selected.cat].light, color:CATEGORIES[selected.cat].color, fontSize:10, fontWeight:600, marginTop:4, border:`1px solid ${CATEGORIES[selected.cat].mid}` }}>{CATEGORIES[selected.cat].name}</span>
+              <p style={{ marginTop:8, fontSize:13, color:"#555", lineHeight:1.65 }}>{selected.desc}</p>
+            </div>
+            <button onClick={e=>{ e.stopPropagation(); setSelected(null); }} aria-label="Schließen" style={{ background:"#f7f7f5", border:"1px solid #e8e8e3", color:"#aaa", borderRadius:8, width:30, height:30, cursor:"pointer", fontSize:13, display:"flex", alignItems:"center", justifyContent:"center" }}>✕</button>
+          </div>
+        </div>
+      )}
+
+      <footer style={{ textAlign:"center", marginTop:22, padding:"12px 0", borderTop:"1px solid #f0f0ec", fontSize:10, color:"#ccc", fontFamily:"'DM Mono',monospace" }}>
+        Periodensystem der KI · 2026 · 128 Bausteine · <a href="https://godmodeai2025.github.io/MarkZimmermann/" target="_blank" rel="noopener noreferrer" style={{ color:"#bbb", textDecoration:"none", borderBottom:"1px solid #ddd" }} onMouseEnter={e=>e.target.style.color="#666"} onMouseLeave={e=>e.target.style.color="#bbb"}>Impressum</a>
+      </footer>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+
+</script>
+</body>
+</html>

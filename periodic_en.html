@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Periodic Table of AI — 128 Building Blocks</title>
+  <meta name="description" content="The Periodic Table of AI: 128 elements in 10 categories." />
+  <meta property="og:title" content="Periodic Table of AI — 128 Building Blocks" />
+  <meta property="og:locale" content="en_US" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; }
+    body { background: #FAFAF8; font-family: 'DM Sans', 'Helvetica Neue', sans-serif; color: #1a1a1a; }
+    @keyframes slideUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  </style>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.2/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const { useState, useEffect, useRef, useMemo } = React;
+
+const CATEGORIES = {
+  FM: { name: "Foundation Models", color: "#C62828", light: "#FFEBEE", mid: "#EF9A9A" },
+  AR: { name: "Architectures", color: "#E65100", light: "#FFF3E0", mid: "#FFCC80" },
+  LP: { name: "Learning Paradigms", color: "#9E7A15", light: "#FFF8E1", mid: "#FFE082" },
+  DA: { name: "Data & Processing", color: "#00695C", light: "#E0F2F1", mid: "#80CBC4" },
+  TF: { name: "Tools & Frameworks", color: "#37474F", light: "#ECEFF1", mid: "#B0BEC5" },
+  AP: { name: "Applications", color: "#6A1B9A", light: "#F3E5F5", mid: "#CE93D8" },
+  ES: { name: "Ethics & Safety", color: "#BF360C", light: "#FBE9E7", mid: "#FFAB91" },
+  IN: { name: "Infrastructure", color: "#1565C0", light: "#E3F2FD", mid: "#90CAF9" },
+  AG: { name: "Agents &Tic", color: "#00838F", light: "#E0F7FA", mid: "#80DEEA" },
+  NL: { name: "NLP & Language", color: "#283593", light: "#E8EAF6", mid: "#9FA8DA" },
+};
+
+const elements = [{ sym: "GPT", row: 0, col: 0, name: "GPT", cat: "FM", desc: "OpenAI's language model family and the most commercially successful LLM worldwide. From GPT-3.5 through GPT-4 to GPT-4o and the reasoning models o1/o3, each generation brought breakthroughs in text, code, and multimodal understanding. GPT models power ChatGPT, Microsoft Copilot, and thousands of API integrations. The architecture is based on decoder-only transformers with autoregressive next-token prediction." },
+  { sym: "Cld", row: 0, col: 1, name: "Claude", cat: "FM", desc: "Anthropic's AI assistant, built with the goal of maximum safety and helpfulness. Claude uses Constitutional AI (CAI) as its alignment method, training the model according to a constitution of ethical principles. With over 200,000 token context window, Claude excels at long documents, complex analyses, and code. Claude Code enables agentic coding directly in the terminal." },
+  { sym: "Gem", row: 0, col: 14, name: "Gemini", cat: "FM", desc: "Google DeepMind's multimodal flagship model that natively processes text, image, audio, and video in a single architecture. Gemini was designed multimodal from the ground up. The family includes Ultra, Pro, and Flash variants for different performance requirements. Deeply integrated into Google's product ecosystem: Search, Workspace, Android, and Cloud." },
+  { sym: "Lla", row: 0, col: 15, name: "LLaMA", cat: "FM", desc: "Meta's open-source LLM family that has significantly shaped the ecosystem of open language models. LLaMA models are extensively fine-tuned by the community — Alpaca, Vicuna, and thousands of variants are built on top. The open license enables commercial use and has fueled competition between open and closed-source models. LLaMA 3 reached GPT-4 level in many benchmarks." },
+  { sym: "Mis", row: 0, col: 16, name: "Mistral", cat: "FM", desc: "European AI company from Paris disrupting the market with efficient open-source models. Mistral uses Mixture-of-Experts (MoE) architecture to deliver high quality with less active compute. Particularly fast in inference, ideal for latency-sensitive applications. Plays an important role in the digital sovereignty debate." },
+  { sym: "Grk", row: 0, col: 17, name: "Grok", cat: "FM", desc: "xAI's language model, founded by Elon Musk as an alternative to OpenAI. Grok has exclusive real-time access to X/Twitter data, making it useful for current events and trending topics. Known for its direct, humorous communication style. Offered as open-source, trained on xAI's own Colossus GPU infrastructure." },
+  { sym: "SD", row: 9, col: 3, name: "Stable Diffusion", cat: "FM", desc: "The most important open-source image generation model and basis of a massive community ecosystem. Released as open source in 2022, triggering an explosion of fine-tunes, ControlNet, LoRAs, and custom workflows. SDXL and SD3 significantly improved quality and text rendering. ComfyUI and Automatic1111 are popular code-free interfaces." },
+  { sym: "MdJ", row: 9, col: 4, name: "Midjourney", cat: "FM", desc: "Produces the most aesthetically impressive AI-generated images with its own artistic identity. Runs via Discord bots and a web app. Midjourney's strength lies in artistic interpretation of prompts — results often look like professional illustrations. Particularly popular with designers and concept artists." },
+  { sym: "DaE", row: 9, col: 5, name: "DALL·E", cat: "FM", desc: "OpenAI's image generator that first brought the world's attention to text-to-image in 2021. DALL-E 3 is deeply integrated into ChatGPT with remarkable text fidelity. Inpainting and outpainting enable targeted editing of specific image regions." },
+  { sym: "Sor", row: 9, col: 6, name: "Sora", cat: "FM", desc: "OpenAI's video generation model that caused a sensation in 2024 with physically coherent demo videos. Understands 3D consistency, object permanence, and physical interactions at an unmatched level. Uses a diffusion transformer architecture processing videos as patch sequences. Marks a new era for content creation." },
+  { sym: "Whi", row: 9, col: 7, name: "Whisper", cat: "FM", desc: "OpenAI's open-source speech recognition model for 100+ languages. Trained on 680,000 hours of multilingual audio. Remarkable robustness against accents, background noise, and technical language. The standard for transcription, subtitles, and voice interfaces." },
+  { sym: "AlF", row: 9, col: 8, name: "AlphaFold", cat: "FM", desc: "DeepMind solved one of biology's greatest open problems in 2020: predicting 3D protein structure from amino acid sequences. AlphaFold2 predicted structures of over 200 million proteins. Hassabis and Jumper received the 2024 Nobel Prize in Chemistry." },
+  { sym: "BRT", row: 9, col: 9, name: "BERT", cat: "FM", desc: "Google's 2018 breakthrough for Natural Language Understanding. Unlike GPT, BERT learns bidirectionally — understanding context from both sides. Revolutionized NLP benchmarks and remains the basis of many production systems for classification, NER, and search." },
+  { sym: "CLp", row: 9, col: 10, name: "CLIP", cat: "FM", desc: "OpenAI's CLIP connects image and text understanding in a shared embedding space. Trained on 400 million image-text pairs, it classifies images into arbitrary categories zero-shot. A key building block for diffusion-based image generation and multimodal search." },
+  { sym: "DpS", row: 9, col: 11, name: "DeepSeek", cat: "FM", desc: "Chinese lab that surprised the AI world in 2024/2025: reaching Western top-tier levels at much less training compute despite chip sanctions. DeepSeek-V3 uses innovative MoE architecture trained at a fraction of comparable costs. Sparked debate about export control effectiveness." },
+  { sym: "Phi", row: 9, col: 12, name: "Phi", cat: "FM", desc: "Microsoft's family of small but powerful language models (SLMs). Phi-3 with 3.8B parameters challenges much larger models through careful data selection and synthetic training. Optimized for edge deployment: smartphones, laptops, IoT." },
+  { sym: "Flx", row: 9, col: 13, name: "Flux", cat: "FM", desc: "Fast, high-quality open-source image generator from Black Forest Labs (ex-Stability AI researchers). Competes with Midjourney and DALL-E 3 quality at full open-source availability. A popular alternative for local and API-based generation." },
+  { sym: "Qwn", row: 9, col: 14, name: "Qwen", cat: "FM", desc: "Alibaba Cloud's multimodal, multilingual open-source LLM family. Qwen2.5 offers 0.5B to 72B parameter models plus specialized code, math, and vision variants. Demonstrates that the Chinese AI ecosystem produces full alternatives to Western Foundation Models." },
+
+  { sym: "Trf", row: 1, col: 0, name: "Transformer", cat: "AR", desc: "The architecture that ignited the AI revolution in 2017 — 'Attention Is All You Need'. Replaces recurrent networks with parallel self-attention, enabling dramatically faster training. Virtually every modern language model is based on this architecture." },
+  { sym: "Att", row: 1, col: 1, name: "Self-Attention", cat: "AR", desc: "The core mechanism of modern transformer architectures. Computes for each token how much to attend to every other token. Costs scale quadratically with sequence length, driving development of efficient variants like Flash Attention." },
+  { sym: "CNN", row: 1, col: 2, name: "Convolutional NN", cat: "AR", desc: "Revolutionized image recognition from 2012 with learnable filters extracting hierarchical features. Although Vision Transformers have surpassed CNNs in many benchmarks, CNNs remain relevant for edge devices due to efficiency." },
+  { sym: "RNN", row: 1, col: 3, name: "Recurrent NN", cat: "AR", desc: "Process sequences step by step, maintaining information in a hidden state. LSTMs and GRUs solved the vanishing gradient problem. Largely replaced by Transformers since 2017, but still relevant in specialized applications." },
+  { sym: "GAN", row: 1, col: 4, name: "Gen. Adversarial Net", cat: "AR", desc: "Two networks in competition: Generator creates fake data, Discriminator detects fakes. Groundbreaking for image generation but largely superseded by Diffusion Models. Notorious for unstable training (mode collapse)." },
+  { sym: "VAE", row: 1, col: 5, name: "Variational Autoencoder", cat: "AR", desc: "Learn a compressed, probabilistic data representation in latent space. A building block of Latent Diffusion Models (e.g., Stable Diffusion) where the VAE encoder compresses images into latent space." },
+  { sym: "Dif", row: 1, col: 6, name: "Diffusion Models", cat: "AR", desc: "Learn to progressively remove noise from images — iterative denoising. Higher quality than GANs, the architecture behind DALL-E 3, Stable Diffusion, and Midjourney. Slow inference due to many denoising steps." },
+  { sym: "MoE", row: 1, col: 7, name: "Mixture of Experts", cat: "AR", desc: "Activates only a small portion of the model per input through learned routing — typically 2 of 64 experts. Massive capacity at moderate compute cost. Used by Mixtral, and GPT-4 is believed to use MoE." },
+  { sym: "SSM", row: 1, col: 10, name: "State Space Model", cat: "AR", desc: "Mamba and others offer linear instead of quadratic complexity. Advantages for very long contexts (>100k tokens). Hybrid architectures combining SSM with attention layers are gaining popularity." },
+  { sym: "GNN", row: 1, col: 11, name: "Graph Neural Net", cat: "AR", desc: "Learn on graph-structured data through message passing between nodes. Used for molecular design, social network analysis, recommender systems, and fraud detection." },
+  { sym: "MHd", row: 1, col: 12, name: "Multi-Head Attention", cat: "AR", desc: "Performs self-attention multiple times in parallel with different projections. Each head learns different relationship patterns. GPT-4 uses 100+ heads per layer for rich context modeling." },
+  { sym: "KVc", row: 1, col: 13, name: "KV-Cache", cat: "AR", desc: "Stores computed Key and Value vectors during autoregressive generation, eliminating redundant computation. PagedAttention manages cache memory intelligently for efficient serving." },
+  { sym: "LoR", row: 1, col: 14, name: "LoRA", cat: "AR", desc: "Efficient fine-tuning by training only small additional matrices. Reduces memory by 90%+, enables adaptation on consumer GPUs. QLoRA makes fine-tuning 70B models on a single GPU possible." },
+  { sym: "QAn", row: 1, col: 15, name: "Quantization", cat: "AR", desc: "Compresses model weights to 8-bit, 4-bit, or 2-bit. A 70B model fits on a consumer GPU. Methods like GPTQ, AWQ, and GGUF preserve quality remarkably well. Critical for local LLM use." },
+  { sym: "Emb", row: 1, col: 16, name: "Embeddings", cat: "AR", desc: "Translate concepts into dense vectors where semantic similarity maps to geometric proximity. Fundamental for RAG, search engines, and recommendation systems. OpenAI ada-002 and Sentence-BERT produce high-quality embeddings." },
+  { sym: "Tok", row: 1, col: 17, name: "Tokenizer", cat: "AR", desc: "Split text into sub-word units. BPE, SentencePiece, and WordPiece are common methods. Choice significantly affects efficiency, multilingual support, and context window utilization." },
+
+  { sym: "SuL", row: 2, col: 0, name: "Supervised Learning", cat: "LP", desc: "The most classic form of ML: learning from labeled input-output pairs. Basis for classification, regression, and also LLM pre-training (next token as label)." },
+  { sym: "UsL", row: 2, col: 1, name: "Unsupervised Learning", cat: "LP", desc: "Discovers structures in data without labels. Clustering, dimensionality reduction, anomaly detection. Often used as a precursor to supervised learning." },
+  { sym: "RfL", row: 2, col: 2, name: "Reinforcement Learning", cat: "LP", desc: "Trains an agent through interaction with an environment. Crucial for AlphaGo, robotics, and RLHF — fine-tuning LLMs to human preferences." },
+  { sym: "SSL", row: 2, col: 3, name: "Self-Supervised", cat: "LP", desc: "Generates training signals directly from data. Masked Language Modeling (BERT) and next-token prediction (GPT) enable training on massive unlabeled datasets — the foundation of all Foundation Models." },
+  { sym: "TrL", row: 2, col: 4, name: "Transfer Learning", cat: "LP", desc: "Transfers knowledge from one task to a new one. Core of the Foundation Model approach: train expensively once, specialize cheaply many times. Massively lowered the barrier for AI applications." },
+  { sym: "FwL", row: 2, col: 5, name: "Few-Shot Learning", cat: "LP", desc: "Learning from just a handful of examples (1-10). In LLMs via In-Context Learning: examples in the prompt without weight changes. GPT-3 first demonstrated impressive few-shot capabilities in 2020." },
+  { sym: "ZeS", row: 2, col: 6, name: "Zero-Shot", cat: "LP", desc: "Solving tasks without explicit examples. The model generalizes through language understanding alone. CLIP demonstrated zero-shot image classification into arbitrary categories." },
+  { sym: "RHF", row: 2, col: 7, name: "RLHF", cat: "LP", desc: "The technique that made ChatGPT possible. Humans rate model responses, a reward model is trained, which optimizes the language model via RL. Developed by OpenAI and Anthropic." },
+  { sym: "DPO", row: 2, col: 8, name: "Direct Preference Opt.", cat: "LP", desc: "Simplifies RLHF by eliminating the separate reward model. Mathematically equivalent to RLHF but simpler and more stable. Many newer models use DPO or variants." },
+  { sym: "CoT", row: 2, col: 9, name: "Chain-of-Thought", cat: "LP", desc: "Gets LLMs to think step by step. Accuracy on math and logic tasks increases dramatically. OpenAI's o1 internalizes CoT as a hidden reasoning process." },
+  { sym: "ICL", row: 2, col: 10, name: "In-Context Learning", cat: "LP", desc: "The remarkable ability of large LLMs to learn from examples in the prompt — without weight changes. This emergent behavior appears only above certain model sizes and is not fully understood theoretically." },
+  { sym: "CuL", row: 2, col: 11, name: "Curriculum Learning", cat: "LP", desc: "Organizes training data from easy to hard. Shows faster convergence and better generalization. Used in LLM pre-training data mixing strategies." },
+  { sym: "FdL", row: 2, col: 12, name: "Federated Learning", cat: "LP", desc: "Trains models in a decentralized manner across devices. Raw data stays local, only gradients are shared. Apple uses it for keyboard predictions. Particularly relevant for healthcare data." },
+  { sym: "MtL", row: 2, col: 13, name: "Meta-Learning", cat: "LP", desc: "'Learning to learn' — trains models that quickly adapt to new tasks. MAML optimizes initializations from which few updates suffice for new tasks." },
+  { sym: "CtL", row: 2, col: 14, name: "Contrastive Learning", cat: "LP", desc: "Trains by comparing similar and dissimilar data pairs. CLIP uses it between image-text pairs, SimCLR between augmented images. Central to self-supervised learning." },
+  { sym: "DiT", row: 2, col: 15, name: "Distillation", cat: "LP", desc: "Transfers knowledge from a large teacher to a smaller student model. DistilBERT achieves 97% of BERT's performance at 60% size. Critical for mobile and edge deployment." },
+  { sym: "FnT", row: 2, col: 16, name: "Fine-Tuning", cat: "LP", desc: "Adapts Foundation Models to specific tasks. Instruction fine-tuning turned GPT-3 into InstructGPT. Fine-tuning data quality largely determines model quality." },
+  { sym: "PrT", row: 2, col: 17, name: "Pre-Training", cat: "LP", desc: "The initial phase on trillions of tokens. Costs millions in GPU hours. Data mix quality is one of the most guarded secrets of AI labs." },
+
+  { sym: "RAG", row: 3, col: 0, name: "Retrieval-Augmented Gen.", cat: "DA", desc: "Combines LLMs with external knowledge search. Drastically reduces hallucinations and enables incorporating enterprise knowledge without retraining. The de facto standard for enterprise AI." },
+  { sym: "VeD", row: 3, col: 1, name: "Vector Database", cat: "DA", desc: "Store and search embedding vectors with nearest-neighbor algorithms. Pinecone, Weaviate, Chroma, Qdrant. The backbone of every RAG system and semantic search." },
+  { sym: "FtE", row: 3, col: 2, name: "Feature Engineering", cat: "DA", desc: "Transforms raw data into informative features for ML models. Good feature engineering improves performance more than switching algorithms. Still critical for tabular data." },
+  { sym: "DAu", row: 3, col: 3, name: "Data Augmentation", cat: "DA", desc: "Artificially creates new training data. Images: rotation, flip, cutout. Text: paraphrasing, back-translation. Prevents overfitting, especially with small datasets." },
+  { sym: "ETL", row: 3, col: 4, name: "ETL Pipeline", cat: "DA", desc: "Automates data flow from raw sources to training-ready datasets. Apache Spark, dbt, Airflow, and Dagster orchestrate these pipelines." },
+  { sym: "LaD", row: 3, col: 5, name: "Labeling", cat: "DA", desc: "The often underestimated bottleneck: humans annotate data with correct categories. RLHF annotation requires subjective quality ranking. Scale AI and Labelbox have professionalized the industry." },
+  { sym: "SyD", row: 3, col: 6, name: "Synthetic Data", cat: "DA", desc: "AI-generated data to supplement training sets or avoid privacy issues. Microsoft's Phi was partly trained on GPT-4-generated data — controversial but effective." },
+  { sym: "PrP", row: 3, col: 7, name: "Preprocessing", cat: "DA", desc: "Data cleaning before training: deduplication, quality filtering, language detection, removal of toxic content. 'Garbage In, Garbage Out' applies especially to AI." },
+  { sym: "GrR", row: 3, col: 14, name: "GraphRAG", cat: "DA", desc: "Extends RAG with knowledge graphs that model entity relationships. Shows clear advantages for multi-hop questions over classic chunk-based RAG." },
+  { sym: "ChS", row: 3, col: 15, name: "Chunking", cat: "DA", desc: "Determines how documents are split for RAG — a critical design decision. Fixed-size, semantic, recursive, and agentic chunking address different requirements." },
+  { sym: "OCR", row: 3, col: 16, name: "OCR", cat: "DA", desc: "Extracts text from images and scanned PDFs. Multimodal LLMs like GPT-4V can perform OCR implicitly while understanding layout and context." },
+  { sym: "WCr", row: 3, col: 17, name: "Web Crawling", cat: "DA", desc: "Systematically collects data from the internet. Common Crawl provides petabytes monthly — the basis of nearly all LLM training corpora. Firecrawl and Apify extract structured data for RAG." },
+
+  { sym: "PyT", row: 4, col: 0, name: "PyTorch", cat: "TF", desc: "Meta's deep learning framework and undisputed research standard. Dynamic computation graphs, used by 80%+ of ML papers. torch.compile closes production performance gaps." },
+  { sym: "TnF", row: 4, col: 1, name: "TensorFlow", cat: "TF", desc: "Google's ML framework focused on production. TFLite for mobile, TF.js for browser, TF Serving for scalable inference. First choice in many production environments." },
+  { sym: "HgF", row: 4, col: 2, name: "Hugging Face", cat: "TF", desc: "The GitHub of the AI world — 500,000+ models. Transformers library, Model Hub, Datasets, Spaces. Democratizes ML access and is often the first stop for AI developers." },
+  { sym: "LCh", row: 4, col: 3, name: "LangChain", cat: "TF", desc: "The most popular framework for LLM applications. Chains, Agents, Memory, and RAG pipelines. Supports all major LLM providers and hundreds of tools." },
+  { sym: "LId", row: 4, col: 4, name: "LlamaIndex", cat: "TF", desc: "Data framework for LLM access to external sources. Specializes in indexing, retrieval, and query processing across diverse formats — PDFs, databases, APIs, Notion, Slack." },
+  { sym: "vLM", row: 4, col: 5, name: "vLLM", cat: "TF", desc: "High-performance inference engine with PagedAttention. 2-4x more concurrent requests than naive implementations. The de facto standard for self-hosted LLM serving." },
+  { sym: "Olm", row: 4, col: 6, name: "Ollama", cat: "TF", desc: "Makes local LLMs as easy as Docker: 'ollama run llama3' starts a model in seconds. Manages downloads, quantization, and local API automatically. OpenAI-compatible API for seamless integration." },
+  { sym: "MCP", row: 4, col: 7, name: "Model Context Protocol", cat: "TF", desc: "Anthropic's open standard for tool integration in LLM systems. Like USB-C for hardware: one interface for all tools. Becoming the industry standard — Cursor, Replit, and many others support MCP." },
+  { sym: "MLf", row: 4, col: 10, name: "MLflow", cat: "TF", desc: "Open-source ML lifecycle management from Databricks. Experiment tracking, model registry, deployment. Standard tool in enterprise ML teams." },
+  { sym: "WnB", row: 4, col: 11, name: "Weights & Biases", cat: "TF", desc: "Best-in-class experiment tracking with interactive dashboards. Hyperparameter sweeps, artifacts. Standard tool for ML research teams." },
+  { sym: "JAX", row: 4, col: 12, name: "JAX", cat: "TF", desc: "Google's NumPy + Autograd + XLA compiler. DeepMind trained Gemini with it. Functional programming enables easy parallelization across TPU pods." },
+  { sym: "CrA", row: 4, col: 13, name: "CrewAI", cat: "TF", desc: "Python framework for multi-agent systems with clear role assignments. Agents with defined roles, tools, and tasks collaborate together." },
+  { sym: "DSp", row: 4, col: 14, name: "DSPy", cat: "TF", desc: "Stanford's framework for systematic prompt optimization. Instead of manual prompts, define signatures and let the optimizer find the best prompts." },
+  { sym: "A2A", row: 4, col: 15, name: "A2A Protocol", cat: "TF", desc: "Google's open standard for agent-to-agent communication. Defines Agent Cards, task management, and secure communication. Combined with MCP, creates a complete interoperability ecosystem." },
+  { sym: "SmK", row: 4, col: 16, name: "Semantic Kernel", cat: "TF", desc: "Microsoft's AI orchestration with plugins, planner, and memory. Particularly strong in the Microsoft ecosystem (Azure, Office 365, Dynamics). AI orchestration layer between LLM and business logic." },
+  { sym: "OAI", row: 4, col: 17, name: "OpenAI API", cat: "TF", desc: "The most widely used LLM API globally. Chat Completions as de facto standard — many providers offer compatible endpoints. Assistants API for agentic applications with Code Interpreter and Function Calling." },
+
+  { sym: "NLG", row: 5, col: 0, name: "Text Generation", cat: "AP", desc: "LLMs generate token by token autoregressively. Temperature, top-p sampling, and frequency penalty control creativity and coherence. Now in virtually every industry: marketing, journalism, customer service, software development." },
+  { sym: "ImG", row: 5, col: 1, name: "Image Generation", cat: "AP", desc: "DALL-E 3, Midjourney, Stable Diffusion, and Flux create photorealistic images from text. Used for advertising, product design, concept art. Ethical debates about copyright and deepfakes accompany the revolution." },
+  { sym: "TTS", row: 5, col: 2, name: "Text-to-Speech", cat: "AP", desc: "Converts text to natural-sounding speech. ElevenLabs enables voice cloning with seconds of audio. Used for audiobooks, podcasts, accessibility, and content localization." },
+  { sym: "STT", row: 5, col: 3, name: "Speech-to-Text", cat: "AP", desc: "Whisper set new standards in 2022: multilingual, robust, open source. Modern ASR achieves near-human accuracy. Applications from meeting transcription to voice interfaces." },
+  { sym: "CpV", row: 5, col: 4, name: "Computer Vision", cat: "AP", desc: "Image recognition, object detection, segmentation, pose estimation. Multimodal LLMs have dissolved the boundaries between CV and NLP. Used in quality control, medicine, autonomous driving, AR." },
+  { sym: "VdG", row: 5, col: 5, name: "Video Generation", cat: "AP", desc: "Sora, Runway, Kling, and Pika generate videos from text. Still struggles with physical consistency. Use cases: advertising, film previsualization, social media content." },
+  { sym: "CdG", row: 5, col: 6, name: "Code Generation", cat: "AP", desc: "GitHub Copilot, Cursor, Claude Code generate code from natural language. 30-55% productivity increase. Every developer will work with AI tools in the future." },
+  { sym: "RoB", row: 5, col: 7, name: "Robotics", cat: "AP", desc: "Embodied AI connects Foundation Models with physical interaction. Google's RT-2 and Figure 01 use vision-language models for robot control. Tesla Optimus and Figure are redefining humanoid robots." },
+  { sym: "ViC", row: 5, col: 10, name: "Vibe Coding", cat: "AP", desc: "Software development through natural language instead of coding. Cursor, Replit Agent, Claude Code, v0. Democratizes development for non-programmers." },
+  { sym: "DrA", row: 5, col: 11, name: "Drug Discovery", cat: "AP", desc: "AlphaFold solved protein folding (Nobel Prize 2024). Generative models design new molecules. AI could compress the 10-15 year drug development cycle to 2-3 years." },
+  { sym: "AvD", row: 5, col: 12, name: "Autonomous Driving", cat: "AP", desc: "Tesla uses camera-based end-to-end approach, Waymo uses lidar. Level 4 is reality in limited areas. Level 5 remains one of AI's greatest open challenges." },
+  { sym: "ReS", row: 5, col: 13, name: "Recommender Systems", cat: "AP", desc: "Netflix, Spotify, Amazon, TikTok generate billions through personalized recommendations. Collaborative filtering, content-based, hybrid. Increasingly LLM-based conversational recommendations." },
+  { sym: "SeA", row: 5, col: 14, name: "Sentiment Analysis", cat: "AP", desc: "Automatic emotion detection in text. Brand monitoring, financial analysis, customer service triage. >90% accuracy, challenges with sarcasm and cultural context." },
+  { sym: "3DG", row: 5, col: 15, name: "3D Generation", cat: "AP", desc: "NeRF and Gaussian Splatting create 3D assets from text or images. Meshy, Tripo, Luma for games, AR/VR. Quality approaching production-ready levels." },
+  { sym: "MuG", row: 5, col: 16, name: "Music Generation", cat: "AP", desc: "Suno and Udio create complete songs including vocals from text. Transformer and diffusion models trained on millions of songs. Intense copyright debate." },
+  { sym: "SrC", row: 5, col: 17, name: "AI Search", cat: "AP", desc: "Perplexity delivers answers instead of links, Google AI Overview summarizes results. Threatens the classic search model. Users get faster answers, content creators get less traffic." },
+
+  { sym: "AgW", row: 6, col: 10, name: "Agentic Workflows", cat: "AG", desc: "Autonomous AI agents that plan, act, observe, and improve. Instead of one-shot prompt-response, agents run iterative loops. 2024/2025 marks the transition from chatbots to real AI agents." },
+  { sym: "ToU", row: 6, col: 11, name: "Tool Use", cat: "AG", desc: "LLMs call APIs, execute code, query databases. Function Calling, Tool Use, and MCP standardize integration. Without tools, an LLM is limited to its training knowledge." },
+  { sym: "MAS", row: 6, col: 12, name: "Multi-Agent Systems", cat: "AG", desc: "Multiple specialized agents cooperate: Researcher gathers, Writer formulates, Critic reviews. Scales better than monolithic agents for complex, multi-step tasks." },
+  { sym: "PrE", row: 6, col: 13, name: "Prompt Engineering", cat: "AG", desc: "System prompts, few-shot examples, chain-of-thought, role prompting. Increasingly complemented by automated methods (DSPy) but remains valuable as a human skill." },
+  { sym: "MeM", row: 6, col: 14, name: "Memory Systems", cat: "AG", desc: "Short-term memory in context window, long-term in vector databases. MemGPT manages memory hierarchically like an OS. Critical for personalized assistants and long-term projects." },
+  { sym: "PlN", row: 6, col: 15, name: "Planning & Reasoning", cat: "AG", desc: "ReAct alternates between thinking and acting, Tree-of-Thought explores solution paths in parallel. Reasoning capabilities (o1/o3, Claude) have improved dramatically in 2024/2025." },
+  { sym: "CdI", row: 6, col: 16, name: "Code Interpreter", cat: "AG", desc: "LLMs execute Python in sandbox. Data analysis, calculations, charts become precise rather than approximate. OpenAI, Claude, and Google offer this capability." },
+  { sym: "OcH", row: 6, col: 17, name: "Orchestration", cat: "AG", desc: "Coordinates LLMs, tools, and agents in workflows. DAGs define dependencies and parallelization. LangGraph, Prefect, Temporal connect microservices into end-to-end pipelines." },
+
+  { sym: "AlI", row: 6, col: 0, name: "Alignment", cat: "ES", desc: "Synchronizing AI goals with human values. Constitutional AI, RLHF, DPO. Becomes existential as models grow more powerful. Research on reward hacking and scalable oversight." },
+  { sym: "XAI", row: 6, col: 1, name: "Explainability", cat: "ES", desc: "SHAP, LIME, attention maps make AI decisions comprehensible. Increasingly required by regulation (EU AI Act). Deep learning models are inherently hard to explain." },
+  { sym: "BiF", row: 6, col: 2, name: "Bias & Fairness", cat: "ES", desc: "AI reproduces biases from training data. Fairness metrics and audit frameworks help. Complete bias elimination is impossible — the question is which tradeoffs are acceptable." },
+  { sym: "PrI", row: 6, col: 3, name: "Privacy", cat: "ES", desc: "Differential Privacy, membership inference attacks, GDPR, and EU AI Act. Data protection in training, inference, and deployment of AI systems." },
+  { sym: "RdT", row: 6, col: 4, name: "Red Teaming", cat: "ES", desc: "Systematic adversarial testing for jailbreaks, prompt injection, and toxic outputs. Anthropic, OpenAI, and Google conduct extensive red-teaming campaigns before every release." },
+  { sym: "GuR", row: 6, col: 5, name: "Guardrails", cat: "ES", desc: "Safety layers between input and output. NeMo Guardrails, Guardrails AI, LlamaGuard. Essential for enterprise deployment where uncontrolled outputs carry liability risks." },
+  { sym: "HaL", row: 6, col: 6, name: "Hallucinations", cat: "ES", desc: "LLMs generate plausible but false information. Countermeasures: RAG, Chain-of-Verification, grounding. Complete elimination remains an open challenge." },
+  { sym: "EuA", row: 6, col: 7, name: "EU AI Act", cat: "ES", desc: "World's first comprehensive AI law. Risk classes from Minimal to Unacceptable. Influences AI development globally — like GDPR became the data protection standard." },
+
+  { sym: "GPU", row: 7, col: 0, name: "GPU Computing", cat: "IN", desc: "NVIDIA H100, B200 dominate at 80-90% market share. GPT-4 training: 25,000+ GPUs over months, hundreds of millions in cost. GPU scarcity and energy consumption are central bottlenecks." },
+  { sym: "TPU", row: 7, col: 1, name: "TPU", cat: "IN", desc: "Google's custom AI chips. TPU pods connect thousands of chips for distributed training. Gemini was trained on TPUs. Only available through Google Cloud." },
+  { sym: "ClC", row: 7, col: 2, name: "Cloud ML", cat: "IN", desc: "AWS SageMaker, Azure ML, GCP Vertex AI. ML lifecycle as managed service. API access to Foundation Models via Bedrock, Azure OpenAI, Model Garden." },
+  { sym: "EdG", row: 7, col: 3, name: "Edge AI", cat: "IN", desc: "AI directly on end devices — smartphones, IoT, cameras. TFLite, ONNX, Core ML. Apple Neural Engine, Google Edge TPU. Low latency, privacy, offline capability." },
+  { sym: "CoN", row: 7, col: 4, name: "Containerization", cat: "IN", desc: "Docker and Kubernetes for reproducible, scalable ML workflows. NVIDIA Container Toolkit for GPU access. The standard for reliable production deployment." },
+  { sym: "ScL", row: 7, col: 5, name: "Scaling Laws", cat: "IN", desc: "Kaplan (2020) and Chinchilla (2022): power-law relationships between model size, data, and compute. Theoretical foundation for AI labs' investment decisions." },
+  { sym: "MoS", row: 7, col: 6, name: "Model Serving", cat: "IN", desc: "Triton, TGI, vLLM for production inference. Continuous batching, speculative decoding, tensor parallelism. Autoscaling and A/B testing for reliable serving." },
+  { sym: "CUd", row: 7, col: 7, name: "CUDA", cat: "IN", desc: "NVIDIA's GPU programming model — the foundation of all modern ML. The deepest moat in the AI hardware market. ROCm (AMD) and oneAPI (Intel) try to establish alternatives." },
+
+  { sym: "NER", row: 7, col: 10, name: "Named Entity Rec.", cat: "NL", desc: "Identifies named entities: persons, locations, organizations. Transformer-based, F1 >90%. Building block for information extraction and knowledge graph construction." },
+  { sym: "SuM", row: 7, col: 11, name: "Summarization", cat: "NL", desc: "Extractive selects important sentences, abstractive reformulates. LLMs have revolutionized quality. Applications: news, meeting minutes, paper abstracts." },
+  { sym: "TrN", row: 7, col: 12, name: "Translation", cat: "NL", desc: "Neural MT has reached professional quality. LLMs enable zero-shot translation into rare languages. Google Translate, DeepL, and Meta NLLB translate between hundreds of language pairs." },
+  { sym: "QnA", row: 7, col: 13, name: "Question Answering", cat: "NL", desc: "Open-domain, closed-book, and open-book QA. Extractive marks answers in text, generative formulates freely. Every chatbot is fundamentally a QA system." },
+  { sym: "ClS", row: 7, col: 14, name: "Classification", cat: "NL", desc: "Spam, topics, intent, toxicity. BERT-based >95% accuracy. Zero-shot with LLMs enables categorization without any training examples." },
+  { sym: "ToM", row: 7, col: 15, name: "Topic Modeling", cat: "NL", desc: "BERTopic combines sentence embeddings with clustering. Shows topics in corpora and how they change over time. Applications: market research, social media monitoring." },
+  { sym: "InE", row: 7, col: 16, name: "Info Extraction", cat: "NL", desc: "Structured data from unstructured text: relations, events, attributes. LLMs as universal extractors. Fundamental for knowledge graph construction and business intelligence." },
+  { sym: "DlG", row: 7, col: 17, name: "Dialogue Systems", cat: "NL", desc: "Task-oriented (book a hotel) and open-domain (free conversation). LLMs have unified both. Challenges: coherence, personalization, emotional intelligence." },];
+
+const TOTAL_COLS = 18;
+const catEntries = Object.entries(CATEGORIES);
+
+function Cell({ el, selected, setSelected, hoveredCat }) {
+  const cat = CATEGORIES[el.cat];
+  const isSelected = selected?.sym === el.sym;
+  const dimmed = hoveredCat && hoveredCat !== el.cat;
+  const [hovered, setHovered] = useState(false);
+  const active = isSelected || (hovered && !dimmed);
+  return (
+    <div onClick={() => setSelected(isSelected ? null : el)}
+      onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
+      role="button" tabIndex={0}
+      onKeyDown={e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); setSelected(isSelected?null:el); } }}
+      style={{
+        aspectRatio: "1", background: active ? cat.light : "#fff",
+        border: `1.5px solid ${active ? cat.color : "#e8e8e3"}`,
+        borderLeft: `3px solid ${active ? cat.color : dimmed ? "#e8e8e3" : cat.color+"50"}`,
+        borderRadius: 4, display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center", cursor: "pointer",
+        transition: "all 0.2s", opacity: dimmed ? 0.1 : 1, position: "relative",
+        padding: 2, transform: active ? "scale(1.1)" : "scale(1)",
+        zIndex: active ? 10 : 1, outline: "none",
+        boxShadow: active ? `0 3px 16px ${cat.color}20` : "0 1px 2px rgba(0,0,0,0.03)",
+      }}>
+      <span style={{ fontSize: "clamp(10px,1.5vw,17px)", fontWeight: 700, color: cat.color, lineHeight: 1 }}>{el.sym}</span>
+      <span style={{ fontSize: "clamp(3px,0.48vw,5.5px)", color: "#999", textAlign: "center", lineHeight: 1.15, maxWidth: "96%", overflow: "hidden", whiteSpace: "normal", wordBreak: "break-word", marginTop: 1, fontWeight: 500, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{el.name}</span>
+    </div>
+  );
+}
+
+function App() {
+  const [selected, setSelected] = useState(null);
+  const [hoveredCat, setHoveredCat] = useState(null);
+  const [mounted, setMounted] = useState(false);
+  const detailRef = useRef(null);
+
+  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => { if (selected && detailRef.current) detailRef.current.scrollIntoView({ behavior:"smooth", block:"nearest" }); }, [selected]);
+  useEffect(() => { const h=e=>{ if(e.key==="Escape"){ setSelected(null); setHoveredCat(null); } }; window.addEventListener("keydown",h); return ()=>window.removeEventListener("keydown",h); }, []);
+
+  const grid = useMemo(() => { const g={}; elements.forEach(el=>{ g[`${el.row}-${el.col}`]=el; }); return g; }, []);
+
+  return (
+    <div style={{ minHeight: "100vh", padding: "20px 12px", maxWidth: 1400, margin: "0 auto" }}>
+
+      <div style={{ position: "fixed", top: 12, right: 16, zIndex: 100, display: "flex", alignItems: "center", gap: 3, background: "#fff", borderRadius: 8, padding: 3, border: "1.5px solid #e0e0dc", boxShadow: "0 2px 10px rgba(0,0,0,0.07)", fontFamily: "'DM Sans', sans-serif" }}>
+        <a href="index_en.html" style={{ padding: "4px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600, color: "#999", textDecoration: "none", transition: "all 0.15s" }} onMouseEnter={e=>{ e.target.style.color="#111"; e.target.style.background="#f0f0ec"; }} onMouseLeave={e=>{ e.target.style.color="#999"; e.target.style.background="transparent"; }}>🗺 Map</a>
+        <span style={{ padding: "4px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600, background: "#111", color: "#fff", cursor: "default" }}>⊞ Table</span>
+        <span style={{ width: 1, height: 16, background: "#e0e0dc", margin: "0 2px" }} />
+        <a href="periodic.html" style={{ padding: "4px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600, color: "#999", textDecoration: "none", transition: "all 0.15s" }} onMouseEnter={e=>{ e.target.style.color="#111"; e.target.style.background="#f0f0ec"; }} onMouseLeave={e=>{ e.target.style.color="#999"; e.target.style.background="transparent"; }}>DE</a>
+        <span style={{ padding: "4px 10px", borderRadius: 6, fontSize: 11, fontWeight: 600, background: "#111", color: "#fff", cursor: "default" }}>EN</span>
+      </div>
+
+      <header style={{ textAlign:"center", marginBottom:20, opacity:mounted?1:0, transition:"opacity 0.8s" }}>
+        <div style={{ display:"inline-block", padding:"3px 14px", borderRadius:100, background:"#f0f0ec", fontSize:10, fontWeight:500, color:"#999", letterSpacing:"0.12em", textTransform:"uppercase", fontFamily:"'DM Mono',monospace", marginBottom:6 }}>128 Building Blocks · 10 Categories</div>
+        <h1 style={{ fontSize:"clamp(20px,3.5vw,38px)", fontWeight:700, letterSpacing:"-0.03em", color:"#111", lineHeight:1.15 }}>
+          Periodic Table of{" "}<span style={{ background:"linear-gradient(135deg,#C62828,#E65100,#00695C,#6A1B9A,#1565C0)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>Artificial Intelligence</span>
+        </h1>
+        <p style={{ fontSize:12, color:"#aaa", marginTop:4 }}>All AI building blocks in the classic table layout.</p>
+      </header>
+
+      <nav style={{ display:"flex", flexWrap:"wrap", justifyContent:"center", gap:4, marginBottom:18 }}>
+        {catEntries.map(([key,cat])=>{
+          const active=hoveredCat===key;
+          return <button key={key} onClick={()=>setHoveredCat(active?null:key)} style={{ display:"flex", alignItems:"center", gap:4, padding:"3px 9px", borderRadius:5, cursor:"pointer", background:active?cat.light:"#fff", border:`1.5px solid ${active?cat.color:"#e0e0dc"}`, fontSize:9, fontWeight:600, color:active?cat.color:"#888", fontFamily:"'DM Sans',sans-serif", transition:"all 0.2s" }}><span style={{ width:7, height:7, borderRadius:2, background:cat.color, opacity:active?1:0.5 }} />{cat.name}</button>;
+        })}
+      </nav>
+
+      <div style={{ display:"grid", gridTemplateColumns:`repeat(${TOTAL_COLS},minmax(0,1fr))`, gap:2.5 }}>
+        {[0,1,2,3,4,5,6,7].flatMap(row=>Array.from({length:TOTAL_COLS},(_, col)=>{ const el=grid[`${row}-${col}`]; if(!el) return <div key={`${row}-${col}`} />; return <Cell key={el.sym} el={el} selected={selected} setSelected={setSelected} hoveredCat={hoveredCat} />; }))}
+      </div>
+
+      <div style={{ display:"flex", alignItems:"center", gap:8, margin:"10px 0 4px", paddingLeft:2 }}>
+        <span style={{ fontSize:8, color:"#bbb", letterSpacing:"0.08em", textTransform:"uppercase", fontWeight:500, whiteSpace:"nowrap", fontFamily:"'DM Mono',monospace" }}>★ Extended Foundation Models</span>
+        <div style={{ flex:1, height:1, background:"#e8e8e4" }} />
+      </div>
+      <div style={{ display:"grid", gridTemplateColumns:`repeat(${TOTAL_COLS},minmax(0,1fr))`, gap:2.5 }}>
+        {Array.from({length:TOTAL_COLS},(_, col)=>{ const el=grid[`9-${col}`]; if(!el) return <div key={`ext-${col}`} />; return <Cell key={el.sym} el={el} selected={selected} setSelected={setSelected} hoveredCat={hoveredCat} />; })}
+      </div>
+
+      {selected && (
+        <div ref={detailRef} style={{ background:"#fff", border:`2px solid ${CATEGORIES[selected.cat].color}`, borderRadius:12, padding:18, marginTop:16, animation:"slideUp 0.25s ease", boxShadow:`0 4px 30px ${CATEGORIES[selected.cat].color}12` }}>
+          <div style={{ display:"flex", gap:14, alignItems:"flex-start", flexWrap:"wrap" }}>
+            <div style={{ width:66, height:66, borderRadius:10, flexShrink:0, background:CATEGORIES[selected.cat].light, border:`2px solid ${CATEGORIES[selected.cat].color}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+              <span style={{ fontSize:24, fontWeight:700, color:CATEGORIES[selected.cat].color }}>{selected.sym}</span>
+            </div>
+            <div style={{ flex:1, minWidth:180 }}>
+              <h3 style={{ fontSize:17, fontWeight:700, color:"#111", margin:0 }}>{selected.name}</h3>
+              <span style={{ display:"inline-block", padding:"2px 10px", borderRadius:100, background:CATEGORIES[selected.cat].light, color:CATEGORIES[selected.cat].color, fontSize:10, fontWeight:600, marginTop:4, border:`1px solid ${CATEGORIES[selected.cat].mid}` }}>{CATEGORIES[selected.cat].name}</span>
+              <p style={{ marginTop:8, fontSize:13, color:"#555", lineHeight:1.65 }}>{selected.desc}</p>
+            </div>
+            <button onClick={e=>{ e.stopPropagation(); setSelected(null); }} aria-label="Close" style={{ background:"#f7f7f5", border:"1px solid #e8e8e3", color:"#aaa", borderRadius:8, width:30, height:30, cursor:"pointer", fontSize:13, display:"flex", alignItems:"center", justifyContent:"center" }}>✕</button>
+          </div>
+        </div>
+      )}
+
+      <footer style={{ textAlign:"center", marginTop:22, padding:"12px 0", borderTop:"1px solid #f0f0ec", fontSize:10, color:"#ccc", fontFamily:"'DM Mono',monospace" }}>
+        Periodic Table of AI · 2026 · 128 Building Blocks · <a href="https://godmodeai2025.github.io/MarkZimmermann/" target="_blank" rel="noopener noreferrer" style={{ color:"#bbb", textDecoration:"none", borderBottom:"1px solid #ddd" }} onMouseEnter={e=>e.target.style.color="#666"} onMouseLeave={e=>e.target.style.color="#bbb"}>Imprint</a>
+      </footer>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+
+</script>
+</body>
+</html>
